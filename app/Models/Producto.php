@@ -20,10 +20,14 @@ class Producto extends Model
 
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s' ,
-        'updated_at' => 'datetime:Y-m-d H:i:s'  
+        'updated_at' => 'datetime:Y-m-d H:i:s'
     ];
 
-    use HasFactory;
+    public function ProductoCategorias(){
+        return $this->hasMany(ProductoCategoria::class);
+    }
+
+    /*use HasFactory;
     protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
-                            'product_image', 'product_status', 'product_rating'];
+                            'product_image', 'product_status', 'product_rating'];*/
 }

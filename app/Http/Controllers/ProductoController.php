@@ -17,7 +17,7 @@ class ProductoController extends Controller
     public function index()
     {
         //Producto::_db()->debug = true;
-        $productos = Producto::all()->where("product_status","=",$_ENV['PRODUCT_STATUS_ON']);
+        $productos = Producto::all();
         return $productos;
     }
 
@@ -39,6 +39,9 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
+        /*$this->validate($request->image, [
+            'file' => 'image|mimes:jpeg,png,jpg|max:5120',
+        ]);*/
         $producto =  new Producto();
 
         $imagen = ($request->image)->store('public/imagenes');
@@ -57,7 +60,7 @@ class ProductoController extends Controller
 
         $producto->save();
 
-        return $producto;
+        return $producto->id_product;
     }
 
     /**
@@ -93,7 +96,20 @@ class ProductoController extends Controller
     {
         //$flight = Producto::where('id_product', $request->id)->first();
         //return  $flight;
+        //return $request->id;
+        //return $producto = Producto::find($request->id);
+        //return $producto = Producto::get('id_producto', '=',$request->id);
+        $producto =  new Producto();
+        
         $producto = Producto::findOrFail($request->id);
+                            //->join('product_category', 'product_category.id_product', '=', $request->id)
+                            //->orderBy('created_at', 'desc');*/
+        /*$producto = DB::table('product')
+                        ->join('product_category', 'product_category.id_product', '=', $request->id)
+                        ->where('product.id_product', $request->id)
+                        ->get();*/
+
+        //return $producto;
 
         $producto->id_user = $request->id_user;
         $producto->id_provider = $request->id_provider;
