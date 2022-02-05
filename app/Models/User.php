@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,9 +19,9 @@ class User extends Authenticatable
     protected $fillable = [
         'user_name',
         'user_lastName',
-        'user_email',
+        'email',
         'user_document',
-        'user_password',
+        'password',
         'user_phone',
         'updated_at'
     ];
@@ -53,8 +52,6 @@ class User extends Authenticatable
         'created_at' => 'datetime:Y-m-d H:i:s' ,
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'username' => 'user_name',
-        'password' => 'user_password',
-        'email' => 'user_email'
     ];
 
 
