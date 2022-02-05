@@ -23,10 +23,9 @@ class Producto extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s'
     ];
 
-    public function ProductoCategorias(){
-        return $this->hasMany(ProductoCategoria::class);
+    public function productoCategorias(){
+        return $this->hasMany(ProductoCategoria::class, 'id_product');
     }
-
     /*use HasFactory;
     protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
                             'product_image', 'product_status', 'product_rating'];*/

@@ -20,6 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/register', 'App\Http\Controllers\AuthController@register');
+Route::post('/login', 'App\Http\Controllers\AuthController@login');
+
 // Rutas para el controlador ProductoController
 Route::get('/products', 'App\Http\Controllers\ProductoController@index'); //mostrar todos los registros
 Route::post('/products', 'App\Http\Controllers\ProductoController@store'); //crear un registro

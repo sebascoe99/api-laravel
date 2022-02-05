@@ -17,8 +17,12 @@ class ProductoController extends Controller
     public function index()
     {
         //Producto::_db()->debug = true;
-        $productos = Producto::all();
+        //Producto::_db()->debug = true;
+        $productos = Producto::all()->where("product_status","=",$_ENV['PRODUCT_STATUS_ON']);
         return $productos;
+        /*$productos = DB::table('product_category')
+        ->rightJoin('product', 'product.id_product', '=', 'product_category.id_product')
+        ->get();*/
     }
 
     /**
@@ -50,6 +54,7 @@ class ProductoController extends Controller
         $producto->id_user = intval($request->id_user);
         $producto->id_provider = intval($request->id_provider);
         $producto->id_brand = intval($request->id_brand);
+        $producto->product_name = $request->product_name;
         $producto->product_stock = intval($request->product_stock);
         $producto->product_code = $request->product_code;
         $producto->product_description = $request->product_description;
@@ -94,22 +99,11 @@ class ProductoController extends Controller
      */
     public function update(Request $request)
     {
-        //$flight = Producto::where('id_product', $request->id)->first();
-        //return  $flight;
-        //return $request->id;
-        //return $producto = Producto::find($request->id);
-        //return $producto = Producto::get('id_producto', '=',$request->id);
         $producto =  new Producto();
-        
-        $producto = Producto::findOrFail($request->id);
-                            //->join('product_category', 'product_category.id_product', '=', $request->id)
-                            //->orderBy('created_at', 'desc');*/
-        /*$producto = DB::table('product')
-                        ->join('product_category', 'product_category.id_product', '=', $request->id)
-                        ->where('product.id_product', $request->id)
-                        ->get();*/
 
-        //return $producto;
+        $producto = Producto::findOrFail($request->id);
+        return $producto->productoCategorias->where('product_category_status','=', 1);
+
 
         $producto->id_user = $request->id_user;
         $producto->id_provider = $request->id_provider;
