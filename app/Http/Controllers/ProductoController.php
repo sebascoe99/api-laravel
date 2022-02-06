@@ -14,15 +14,15 @@ class ProductoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
-        //Producto::_db()->debug = true;
-        //Producto::_db()->debug = true;
-        $productos = Producto::all()->where("product_status","=",$_ENV['PRODUCT_STATUS_ON']);
+
+        $productos = Producto::with('productoCategorias')->get()
+        ->where("product_status","=",$_ENV['PRODUCT_STATUS_ON']);
+
         return $productos;
-        /*$productos = DB::table('product_category')
-        ->rightJoin('product', 'product.id_product', '=', 'product_category.id_product')
-        ->get();*/
+
     }
 
     /**
