@@ -46,7 +46,10 @@ class ProductoCategoriaController extends Controller
             $producto_categoria->save();
         }
 
-        return 'Ok';
+        return response()->json([
+            'message' => 'Creado con exito',
+            'status' => 200
+        ]);
     }
 
     /**
@@ -78,9 +81,37 @@ class ProductoCategoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $producto_categoria =  new ProductoCategoria();
+
+        $producto_categoria = ProductoCategoria::where('id_product', '=', $request->id)->get();
+        //return $producto_categoria;
+        if(isset($producto_categoria) && !empty($producto_categoria)){
+
+            foreach ($producto_categoria as $categoriaExistente) {
+
+                foreach ($request->categorias as $categoria){
+
+                    if(!$categoriaExistente == $categoria){
+                        
+                    }
+
+                    $producto_categoria =  new ProductoCategoria();
+
+                    $producto_categoria->id_product = intval($request->id_product);
+                    $producto_categoria->id_category = intval($categoria);
+                    $producto_categoria->product_category_status = $_ENV['PRODUCT_CATEGORY_STATUS_ON'];
+
+                    $producto_categoria->save();
+                }
+            }
+        }
+        return 0;
+        return response()->json([
+            'message' => 'Creado con exito',
+            'status' => 200
+        ]);
     }
 
     /**

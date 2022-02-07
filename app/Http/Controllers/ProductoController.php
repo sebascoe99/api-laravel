@@ -149,14 +149,20 @@ class ProductoController extends Controller
         $producto =  new Producto();
         $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
-        if(isset($producto->product_image)){//Se comprueba si existe una imagen relacionada al producto
+        if(isset($producto->product_image) && isset($request->image) && strcmp($request->image, $producto->product_image) == 0){//Comparar si la url de la imagen es igual a la que ya esta almacenada
+            $urlNueva = $request->image;
+        }
+        else if(isset($producto->product_image)){//Se comprueba si existe una imagen relacionada al producto
             $urlVieja = str_replace('/storage', 'public', $producto->product_image);//Se quita "/storage" de la URL y se agrega "public"
             Storage::delete($urlVieja);// Se elimina imagen
         }
 
+
         if(isset($request->image) && !is_null($request->image) && !empty($request->image)){//Comprobar si existe la imagen y no tenga valor null
             $imagen = ($request->image)->store('public/imagenes');//Obtener la ruta temporal de la imagen y cambiar a 'public/imagenes'
             $urlNueva = Storage::url($imagen);//Guardar la imagen en el Storage
+        }else{
+            $urlNueva = "";
         }
 
         $producto->id_user = intval($request->id_user);
@@ -173,7 +179,7 @@ class ProductoController extends Controller
 
         $producto->save();
 
-        return $producto;
+        return $producto->id_product;
 
     }
 
@@ -186,11 +192,11 @@ class ProductoController extends Controller
     public function destroy(Request $request)
     {
         $producto = Producto::findOrFail($request->id);
-
         $producto->product_status = 0;
-
         $producto->save();
-
-        return $producto;
+        return response()->json([
+            'message' => 'Eliminado correctamente',
+            'status' => 200
+        ]);
     }
 }
