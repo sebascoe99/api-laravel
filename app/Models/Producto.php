@@ -26,6 +26,10 @@ class Producto extends Model
     public function productoCategorias(){
         return $this->hasMany(ProductoCategoria::class, 'id_product');
     }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'id_user');
+    }
     /*use HasFactory;
     protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
                             'product_image', 'product_status', 'product_rating'];*/

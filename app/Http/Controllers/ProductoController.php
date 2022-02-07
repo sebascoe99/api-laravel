@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Producto;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductoController extends Controller
 {
@@ -43,13 +44,46 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        /*$this->validate($request->image, [
-            'file' => 'image|mimes:jpeg,png,jpg|max:5120',
-        ]);*/
         $producto =  new Producto();
 
-        $imagen = ($request->image)->store('public/imagenes');
-        $url = Storage::url($imagen);
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required',
+                'id_provider' => 'required',
+                'id_brand' => 'required',
+                'product_name' => 'required',
+                'product_stock' => 'required',
+                'product_code' => 'required',
+                'product_description' => 'required',
+                'product_price' => 'required',
+                'product_status' => 'required',
+                'product_rating' => 'required'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => 400
+                ]);
+            }
+
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => 400
+                ]);
+        }
+
+        if(isset($request->image) && !is_null($request->image)){//Comprobar si existe la imagen y no tenga valor null
+            $imagen = ($request->image)->store('public/imagenes');//Obtener la ruta temporal de la imagen y cambiar a 'public/imagenes'
+            $url = Storage::url($imagen);//Guardar la imagen en el Storage
+        }else{
+            $url="";
+        }
 
         $producto->id_user = intval($request->id_user);
         $producto->id_provider = intval($request->id_provider);
@@ -63,8 +97,21 @@ class ProductoController extends Controller
         $producto->product_status = intval($request->product_status);
         $producto->product_rating = intval($request->product_rating);
 
-        $producto->save();
+        /*$producto->save([
+            'id_user' => intval($request->id_user),
+            'id_provider' => intval($request->id_provider),
+            'id_brand' => intval($request->id_brand),
+            'product_name' => $request->product_name,
+            'product_stock' => intval($request->product_stock),
+            'product_code' => $request->product_code,
+            'product_description' => $request->product_description,
+            'product_price' => $request->product_price,
+            'product_image' => $url,
+            'product_status' => intval($request->product_status),
+            'product_rating' => intval($request->product_rating)
+        ]);*/
 
+        $producto->save();
         return $producto->id_product;
     }
 
@@ -100,22 +147,29 @@ class ProductoController extends Controller
     public function update(Request $request)
     {
         $producto =  new Producto();
+        $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
-        $producto = Producto::findOrFail($request->id);
-        return $producto->productoCategorias->where('product_category_status','=', 1);
+        if(isset($producto->product_image)){//Se comprueba si existe una imagen relacionada al producto
+            $urlVieja = str_replace('/storage', 'public', $producto->product_image);//Se quita "/storage" de la URL y se agrega "public"
+            Storage::delete($urlVieja);// Se elimina imagen
+        }
 
+        if(isset($request->image) && !is_null($request->image) && !empty($request->image)){//Comprobar si existe la imagen y no tenga valor null
+            $imagen = ($request->image)->store('public/imagenes');//Obtener la ruta temporal de la imagen y cambiar a 'public/imagenes'
+            $urlNueva = Storage::url($imagen);//Guardar la imagen en el Storage
+        }
 
-        $producto->id_user = $request->id_user;
-        $producto->id_provider = $request->id_provider;
-        $producto->id_brand = $request->id_brand;
-        $producto->product_stock = $request->product_stock;
+        $producto->id_user = intval($request->id_user);
+        $producto->id_provider = intval($request->id_provider);
+        $producto->id_brand = intval($request->id_brand);
+        $producto->product_name = $request->product_name;
+        $producto->product_stock = intval($request->product_stock);
         $producto->product_code = $request->product_code;
         $producto->product_description = $request->product_description;
-        $producto->product_stock_minimum = $request->product_stock_minimum;
         $producto->product_price = $request->product_price;
-        $producto->product_image = $request->product_image;
-        $producto->product_status = $request->product_status;
-        $producto->product_rating = $request->product_rating;
+        $producto->product_image = $urlNueva;
+        $producto->product_status = intval($request->product_status);
+        $producto->product_rating = intval($request->product_rating);
 
         $producto->save();
 
