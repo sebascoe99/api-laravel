@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductoCategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProviderController;
+use App\Http\Controllers\BrandController;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,12 @@ Route::get('/providers', [ProviderController::class, 'index']); //mostrar todos 
 Route::post('/providers', [ProviderController::class, 'store']); //crear un proveedor
 Route::put('/providers/{id}', [ProviderController::class, 'update']); //actualizar un proveedor
 Route::delete('/providers/{id}', [ProviderController::class, 'destroy']); //eliminar un proveedor
+
+// Rutas para el controlador BrandController
+Route::get('/brands', [BrandController::class, 'index']); //mostrar todos los proveedores
+Route::post('/brands', [BrandController::class, 'store']); //crear un proveedor
+Route::put('/brands/{id}', [BrandController::class, 'update']); //actualizar un proveedor
+Route::delete('/brands/{id}', [BrandController::class, 'destroy']); //eliminar un proveedor
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
