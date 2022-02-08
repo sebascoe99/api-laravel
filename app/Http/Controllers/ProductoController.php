@@ -51,6 +51,7 @@ class ProductoController extends Controller
                 'id_user' => 'required',
                 'id_provider' => 'required',
                 'id_brand' => 'required',
+                'id_category' => 'required',
                 'product_name' => 'required',
                 'product_stock' => 'required',
                 'product_code' => 'required',
@@ -67,14 +68,14 @@ class ProductoController extends Controller
 
                 return response()->json([
                     'message' => $validator->errors(),
-                    'status' => 400
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
                 ]);
             }
 
         }catch (\Exception $e){
                 return response()->json([
                     'message' => $e->getMessage(),
-                    'status' => 400
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
                 ]);
         }
 
@@ -88,6 +89,7 @@ class ProductoController extends Controller
         $producto->id_user = intval($request->id_user);
         $producto->id_provider = intval($request->id_provider);
         $producto->id_brand = intval($request->id_brand);
+        $producto->id_category = intval($request->id_category);
         $producto->product_name = $request->product_name;
         $producto->product_stock = intval($request->product_stock);
         $producto->product_code = $request->product_code;
@@ -96,23 +98,19 @@ class ProductoController extends Controller
         $producto->product_image = $url;
         $producto->product_status = intval($request->product_status);
         $producto->product_rating = intval($request->product_rating);
-
-        /*$producto->save([
-            'id_user' => intval($request->id_user),
-            'id_provider' => intval($request->id_provider),
-            'id_brand' => intval($request->id_brand),
-            'product_name' => $request->product_name,
-            'product_stock' => intval($request->product_stock),
-            'product_code' => $request->product_code,
-            'product_description' => $request->product_description,
-            'product_price' => $request->product_price,
-            'product_image' => $url,
-            'product_status' => intval($request->product_status),
-            'product_rating' => intval($request->product_rating)
-        ]);*/
-
         $producto->save();
-        return $producto->id_product;
+
+        if(isset($producto->id_product)){
+            return response()->json([
+                'message' => 'Producto creado con exito',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
     }
 
     /**
@@ -196,7 +194,7 @@ class ProductoController extends Controller
         $producto->save();
         return response()->json([
             'message' => 'Eliminado correctamente',
-            'status' => 200
+            'status' => $_ENV['CODE_STATUS_OK']
         ]);
     }
 }
