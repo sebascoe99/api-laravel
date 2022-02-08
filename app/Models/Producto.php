@@ -16,6 +16,7 @@ class Producto extends Model
     protected $primaryKey = 'id_product';
 
     const CREATED_AT = null;
+    //const UPDATED_AT = 'update_time';
     //const UPDATED_AT = null;
 
     protected $casts = [
@@ -23,14 +24,14 @@ class Producto extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s'
     ];
 
-    public function productoCategorias(){
+    /*public function productoCategorias(){
         return $this->hasMany(ProductoCategoria::class, 'id_product');
-    }
+    }*/
 
     public function user(){
         return $this->belongsTo(User::class, 'id_user');
     }
-    /*use HasFactory;
-    protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
+    use HasFactory;
+    /*protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
                             'product_image', 'product_status', 'product_rating'];*/
 }
