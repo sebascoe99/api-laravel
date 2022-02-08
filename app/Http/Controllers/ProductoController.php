@@ -44,8 +44,6 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        $producto =  new Producto();
-
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required',
@@ -65,13 +63,11 @@ class ProductoController extends Controller
             ]);
 
             if($validator->fails()){
-
                 return response()->json([
                     'message' => $validator->errors(),
                     'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
                 ]);
             }
-
         }catch (\Exception $e){
                 return response()->json([
                     'message' => $e->getMessage(),
@@ -86,6 +82,7 @@ class ProductoController extends Controller
             $url="";
         }
 
+        $producto =  new Producto();
         $producto->id_user = intval($request->id_user);
         $producto->id_provider = intval($request->id_provider);
         $producto->id_brand = intval($request->id_brand);
