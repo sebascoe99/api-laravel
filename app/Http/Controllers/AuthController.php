@@ -11,16 +11,6 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     public function register(Request $request){
-
-        /*$validatedData = $request->validate([
-            'id_role' => 'required|max:11',
-            'user_name' => 'required|string|max:100',
-            'user_lastName' => 'required|string|max:100',
-            'email' => 'required|string|email|max:255|unique:user',
-            'user_document' => 'required|string|max:10',
-            'password' => 'required|string|max:50',
-            'user_phone' => 'required|string|max:10'
-        ]);*/
         $user = new User();
 
         $user->id_role = $request->id_role;
@@ -45,8 +35,8 @@ class AuthController extends Controller
         //return $request;
         if (!Auth::attempt($request->only('email', 'password'))){
             return response()->json([
-                'message' => 'Invalid login details',
-                'status' => 401
+                'message' => 'Credenciales Invalidas',
+                'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
             ]);
         }
 
@@ -62,5 +52,15 @@ class AuthController extends Controller
 
     public function infouser(Request $request){
         return $request->user();
+    }
+
+    public function logout(Request $request){
+        $user = User::where('id_user', $request->id)->firstOrFail();
+        $user->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Sesión cerrada con éxito',
+            'status' => $_ENV['CODE_STATUS_OK']
+        ]);
     }
 }

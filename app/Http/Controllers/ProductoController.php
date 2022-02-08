@@ -19,7 +19,8 @@ class ProductoController extends Controller
     public function index()
     {
          //$productos = Producto::all()->where("product_status","=",$_ENV['PRODUCT_STATUS_ON']);
-         $productos = Producto::orderBy('create_date', 'desc')->get()->where("product_status","=",$_ENV['STATUS_ON']);
+         $productos = Producto::orderBy('create_date', 'desc')->get()
+         ->where("product_status","=",$_ENV['STATUS_ON']);
          return $productos;
         //$productos = Producto::with('productoCategorias')->get()
         //->where("product_status","=",$_ENV['PRODUCT_STATUS_ON']);

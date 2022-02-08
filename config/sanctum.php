@@ -44,7 +44,7 @@ return [
     |
     */
 
-    'expiration' => $_ENV['TIME_PERSONAL_ACCESS_TOKEN'],
+    'expiration' => null,
 
     /*
     |--------------------------------------------------------------------------

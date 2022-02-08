@@ -4,6 +4,7 @@ use App\Http\Controllers\ProductoCategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\AuthController;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -58,9 +59,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/register', 'App\Http\Controllers\AuthController@register');
-Route::post('/login', 'App\Http\Controllers\AuthController@login');
-Route::post('/userinfo', 'App\Http\Controllers\AuthController@infouser')->middleware('auth:sanctum');
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout/{id}', [AuthController::class, 'logout']);
+Route::post('/userinfo', [AuthController::class, 'infouser'])->middleware('auth:sanctum');
 
 
 
