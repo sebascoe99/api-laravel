@@ -41,7 +41,7 @@ class ProductoCategoriaController extends Controller
 
             $producto_categoria->id_product = intval($request->id_product);
             $producto_categoria->id_category = intval($categoria);
-            $producto_categoria->product_category_status = $_ENV['PRODUCT_CATEGORY_STATUS_ON'];
+            $producto_categoria->product_category_status = $_ENV['STATUS_ON'];
 
             $producto_categoria->save();
         }
@@ -94,7 +94,7 @@ class ProductoCategoriaController extends Controller
                 foreach ($request->categorias as $categoria){
 
                     if(!$categoriaExistente == $categoria){
-                        
+
                     }
 
                     $producto_categoria =  new ProductoCategoria();
