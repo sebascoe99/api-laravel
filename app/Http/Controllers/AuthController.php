@@ -73,6 +73,8 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
+            'message' => 'Credenciales Correctas',
+            'status' => $_ENV['CODE_STATUS_OK'],
             'access_token' => $token,
             'token_type' => 'Bearer'
         ]);

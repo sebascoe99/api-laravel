@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductoUnitController;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,12 @@ Route::get('/brands', [BrandController::class, 'index']); //mostrar todos los pr
 Route::post('/brands', [BrandController::class, 'store']); //crear un proveedor
 Route::put('/brands/{id}', [BrandController::class, 'update']); //actualizar un proveedor
 Route::delete('/brands/{id}', [BrandController::class, 'destroy']); //eliminar un proveedor
+
+// Rutas para el controlador ProductoUnitController
+Route::get('/units', [ProductoUnitController::class, 'index']); //mostrar todos las unidades
+Route::post('/units', [ProductoUnitController::class, 'store']); //crear una unidad
+Route::put('/units/{id}', [ProductoUnitController::class, 'update']); //actualizar una unidad
+Route::delete('/units/{id}', [ProductoUnitController::class, 'destroy']); //eliminar una unidad
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
