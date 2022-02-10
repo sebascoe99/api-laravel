@@ -146,8 +146,6 @@ class ProductoController extends Controller
      */
     public function update(Request $request)
     {
-        //return $request->all();
-        //return $producto;
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required',
@@ -180,20 +178,17 @@ class ProductoController extends Controller
                 ]);
         }
 
-        /*if($request->hasFile('image')){//Comparar si la url de la imagen es igual a la que ya esta almacenada
-            $urlNueva = $request->image;
-        }
-        else if(isset($producto->product_image)){//Se comprueba si existe una imagen relacionada al producto
-            $urlVieja = str_replace('/storage', 'public', $producto->product_image);//Se quita "/storage" de la URL y se agrega "public"
-            Storage::delete($urlVieja);// Se elimina imagen
+        if($request->hasFile('image')){//Comprobar si existe la imagen
+            Storage::delete($request->product_image); //Eliminar la imagen actual del producto
+            $extensionImagen = '.'.$request->file('image')->extension();//Saber la extension de la imagen
+            $nombreSinExtension = trim($request->product_image, $extensionImagen);//Nombre de la imagen sin extension
+            $nonmbreFinal = $nombreSinExtension.'_'.$request->product_code.$extensionImagen;//nombre final ejemplo:"nombreproducto_codigo"
+            $imagen = $request->file('image')->storeAs('public/imagenes', $nonmbreFinal);//almacenar la imagen en 'public/imagenes'
+            $url = Storage::url($imagen);//Guardar la imagen en el Storage
+        }else{
+            $url = $request->product_image;
         }
 
-        if(isset($request->image) && !is_null($request->image) && !empty($request->image)){//Comprobar si existe la imagen y no tenga valor null
-            $imagen = ($request->image)->store('public/imagenes');//Obtener la ruta temporal de la imagen y cambiar a 'public/imagenes'
-            $urlNueva = Storage::url($imagen);//Guardar la imagen en el Storage
-        }else{
-            $urlNueva = "";
-        }*/
         $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
         $producto->id_user = intval($request->id_user);
@@ -206,7 +201,7 @@ class ProductoController extends Controller
         $producto->product_code = $request->product_code;
         $producto->product_description = $request->product_description;
         $producto->product_price = $request->product_price;
-        $producto->product_image = "";
+        $producto->product_image = $url;
         $producto->product_status = intval($request->product_status);
         $producto->product_rating = intval($request->product_rating);
 
