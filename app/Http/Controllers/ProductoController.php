@@ -146,6 +146,8 @@ class ProductoController extends Controller
      */
     public function update(Request $request)
     {
+        //return $request->all();
+        //return $producto;
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required',
@@ -178,9 +180,7 @@ class ProductoController extends Controller
                 ]);
         }
 
-        $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
-
-        if($request->hasFile('image')){//Comparar si la url de la imagen es igual a la que ya esta almacenada
+        /*if($request->hasFile('image')){//Comparar si la url de la imagen es igual a la que ya esta almacenada
             $urlNueva = $request->image;
         }
         else if(isset($producto->product_image)){//Se comprueba si existe una imagen relacionada al producto
@@ -193,9 +193,9 @@ class ProductoController extends Controller
             $urlNueva = Storage::url($imagen);//Guardar la imagen en el Storage
         }else{
             $urlNueva = "";
-        }
+        }*/
+        $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
-        $producto =  new Producto();
         $producto->id_user = intval($request->id_user);
         $producto->id_provider = intval($request->id_provider);
         $producto->id_brand = intval($request->id_brand);
@@ -206,12 +206,11 @@ class ProductoController extends Controller
         $producto->product_code = $request->product_code;
         $producto->product_description = $request->product_description;
         $producto->product_price = $request->product_price;
-        $producto->product_image = $urlNueva;
+        $producto->product_image = "";
         $producto->product_status = intval($request->product_status);
         $producto->product_rating = intval($request->product_rating);
-        $producto->save();
 
-        if(isset($producto->id_product)){
+        if($producto->save()){
             return response()->json([
                 'message' => 'Producto actualizado con exito',
                 'status' => $_ENV['CODE_STATUS_OK']

@@ -41,24 +41,24 @@ Route::delete('/products/{id}', [ProductoController::class, 'destroy']); //elimi
 
 // Rutas para el controlador ProductoCategoriaController
 Route::post('/productCategory', [ProductoCategoriaController::class, 'store']); //crear relacion de las categorias a las que pertenece un producto
-Route::put('/productCategory/{id}', [ProductoCategoriaController::class, 'update']); //actualizar relacion de las categorias a las que pertenece un producto
+//Route::put('/productCategory/{id}', [ProductoCategoriaController::class, 'update']); //actualizar relacion de las categorias a las que pertenece un producto
 
 // Rutas para el controlador ProductoController
 Route::get('/providers', [ProviderController::class, 'index']); //mostrar todos los proveedores
 Route::post('/providers', [ProviderController::class, 'store']); //crear un proveedor
-Route::put('/providers/{id}', [ProviderController::class, 'update']); //actualizar un proveedor
+//Route::put('/providers/{id}', [ProviderController::class, 'update']); //actualizar un proveedor
 Route::delete('/providers/{id}', [ProviderController::class, 'destroy']); //eliminar un proveedor
 
 // Rutas para el controlador BrandController
 Route::get('/brands', [BrandController::class, 'index']); //mostrar todos los proveedores
 Route::post('/brands', [BrandController::class, 'store']); //crear un proveedor
-Route::put('/brands/{id}', [BrandController::class, 'update']); //actualizar un proveedor
+//Route::put('/brands/{id}', [BrandController::class, 'update']); //actualizar un proveedor
 Route::delete('/brands/{id}', [BrandController::class, 'destroy']); //eliminar un proveedor
 
 // Rutas para el controlador ProductoUnitController
 Route::get('/units', [ProductoUnitController::class, 'index']); //mostrar todos las unidades
 Route::post('/units', [ProductoUnitController::class, 'store']); //crear una unidad
-Route::put('/units/{id}', [ProductoUnitController::class, 'update']); //actualizar una unidad
+//Route::put('/units/{id}', [ProductoUnitController::class, 'update']); //actualizar una unidad
 Route::delete('/units/{id}', [ProductoUnitController::class, 'destroy']); //eliminar una unidad
 
 
