@@ -39,10 +39,6 @@ Route::post('/products', [ProductoController::class, 'store']); //crear un produ
 Route::put('/products/{id}', [ProductoController::class, 'update']); //actualizar un producto
 Route::delete('/products/{id}', [ProductoController::class, 'destroy']); //eliminar un producto
 
-// Rutas para el controlador ProductoCategoriaController
-Route::post('/productCategory', [ProductoCategoriaController::class, 'store']); //crear relacion de las categorias a las que pertenece un producto
-//Route::put('/productCategory/{id}', [ProductoCategoriaController::class, 'update']); //actualizar relacion de las categorias a las que pertenece un producto
-
 // Rutas para el controlador ProductoController
 Route::get('/providers', [ProviderController::class, 'index']); //mostrar todos los proveedores
 Route::post('/providers', [ProviderController::class, 'store']); //crear un proveedor

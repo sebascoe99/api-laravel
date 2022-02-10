@@ -31,7 +31,6 @@ class BrandController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required',
                 'brand_name' => 'required',
                 'brand_status' => 'required',
             ],
@@ -60,7 +59,6 @@ class BrandController extends Controller
         }
 
         $marca =  new Brand();
-        $marca->id_user = intval($request->id_user);
         $marca->brand_name = $request->brand_name;
         $marca->brand_thumbnail = $url;
         $marca->brand_status = $request->brand_status;
@@ -89,7 +87,6 @@ class BrandController extends Controller
     public function update(Request $request){
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required',
                 'brand_name' => 'required',
                 'brand_status' => 'required',
             ],
@@ -119,7 +116,6 @@ class BrandController extends Controller
         }
 
         $marca = Brand::findOrFail($request->id);//Se obtiene el objeto producto por el id
-        $marca->id_user = intval($request->id_user);
         $marca->brand_name = $request->brand_name;
         $marca->brand_thumbnail = $url;
         $marca->brand_status = $request->brand_status;
