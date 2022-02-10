@@ -52,7 +52,10 @@ class BrandController extends Controller
         }
 
         if($request->hasFile('image')){//Comprobar si existe la imagen y no tenga valor null
-            $imagen = $request->image->store('public/imagenes');//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
+            $extensionImagen = '.'.$request->file('image')->extension();
+            $nombreSinExtension = trim($request->brand_thumbnail, $extensionImagen);
+            $nombreFinal = $nombreSinExtension.$extensionImagen;
+            $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
             $url = Storage::url($imagen);//Guardar la imagen en el Storage
         }else{
             $url="";
@@ -85,6 +88,7 @@ class BrandController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request){
+        return $request->all();
         try {
             $validator = Validator::make($request->all(), [
                 'brand_name' => 'required',
@@ -109,7 +113,10 @@ class BrandController extends Controller
 
         if($request->hasFile('image')){//Comprobar si existe la imagen
             Storage::delete($request->brand_thumbnail); //Eliminar la imagen actual del producto
-            $imagen = $request->image->store('public/imagenes');//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
+            $extensionImagen = '.'.$request->file('image')->extension();
+            $nombreSinExtension = trim($request->brand_thumbnail, $extensionImagen);
+            $nombreFinal = $nombreSinExtension.$extensionImagen;
+            $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
             $url = Storage::url($imagen);//Guardar la imagen en el Storage
         }else{
             $url = $request->brand_thumbnail;
@@ -142,6 +149,7 @@ class BrandController extends Controller
     public function destroy(Request $request)
     {
         $marca = Brand::findOrFail($request->id);
+        return $request->id;
         $marca->brand_status = $_ENV['STATUS_OFF'];
         if($marca->save()){
             return response()->json([

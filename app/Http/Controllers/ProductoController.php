@@ -79,8 +79,8 @@ class ProductoController extends Controller
         if($request->hasFile('image')){//Comprobar si existe la imagen y no tenga valor null
             $extensionImagen = '.'.$request->file('image')->extension();
             $nombreSinExtension = trim($request->product_image, $extensionImagen);
-            $nonmbreFinal = $nombreSinExtension.'_'.$request->product_code.$extensionImagen;
-            $imagen = $request->file('image')->storeAs('public/imagenes', $nonmbreFinal);//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
+            $nombreFinal = $nombreSinExtension.'_'.$request->product_code.$extensionImagen;
+            $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
             $url = Storage::url($imagen);//Guardar la imagen en el Storage
         }else{
             $url="";
@@ -182,8 +182,8 @@ class ProductoController extends Controller
             Storage::delete($request->product_image); //Eliminar la imagen actual del producto
             $extensionImagen = '.'.$request->file('image')->extension();//Saber la extension de la imagen
             $nombreSinExtension = trim($request->product_image, $extensionImagen);//Nombre de la imagen sin extension
-            $nonmbreFinal = $nombreSinExtension.'_'.$request->product_code.$extensionImagen;//nombre final ejemplo:"nombreproducto_codigo"
-            $imagen = $request->file('image')->storeAs('public/imagenes', $nonmbreFinal);//almacenar la imagen en 'public/imagenes'
+            $nombreFinal = $nombreSinExtension.'_'.$request->product_code.$extensionImagen;//nombre final ejemplo:"nombreproducto_codigo"
+            $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//almacenar la imagen en 'public/imagenes'
             $url = Storage::url($imagen);//Guardar la imagen en el Storage
         }else{
             $url = $request->product_image;
