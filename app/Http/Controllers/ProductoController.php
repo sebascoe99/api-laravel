@@ -227,11 +227,17 @@ class ProductoController extends Controller
     public function destroy(Request $request)
     {
         $producto = Producto::findOrFail($request->id);
-        $producto->product_status = 0;
-        $producto->save();
-        return response()->json([
-            'message' => 'Eliminado correctamente',
-            'status' => $_ENV['CODE_STATUS_OK']
-        ]);
+        $producto->product_status = $_ENV['STATUS_OFF'];
+        if($producto->save()){
+            return response()->json([
+                'message' => 'Eliminado correctamente',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
     }
 }
