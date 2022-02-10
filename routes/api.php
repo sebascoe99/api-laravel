@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductoUnitController;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
@@ -39,11 +40,17 @@ Route::post('/products', [ProductoController::class, 'store']); //crear un produ
 Route::put('/products/{id}', [ProductoController::class, 'update']); //actualizar un producto
 Route::delete('/products/{id}', [ProductoController::class, 'destroy']); //eliminar un producto
 
-// Rutas para el controlador ProductoController
+// Rutas para el controlador ProviderController
 Route::get('/providers', [ProviderController::class, 'index']); //mostrar todos los proveedores
 Route::post('/providers', [ProviderController::class, 'store']); //crear un proveedor
 Route::put('/providers/{id}', [ProviderController::class, 'update']); //actualizar un proveedor
 Route::delete('/providers/{id}', [ProviderController::class, 'destroy']); //eliminar un proveedor
+
+// Rutas para el controlador CategoryController
+Route::get('/categorys', [CategoryController::class, 'index']); //mostrar todos los proveedores
+Route::post('/categorys', [CategoryController::class, 'store']); //crear un proveedor
+Route::put('/categorys/{id}', [CategoryController::class, 'update']); //actualizar un proveedor
+Route::delete('/categorys/{id}', [CategoryController::class, 'destroy']); //eliminar un proveedor
 
 // Rutas para el controlador BrandController
 Route::get('/brands', [BrandController::class, 'index']); //mostrar todos los proveedores

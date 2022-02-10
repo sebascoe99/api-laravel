@@ -108,11 +108,11 @@ class BrandController extends Controller
         }
 
         if($request->hasFile('image')){//Comprobar si existe la imagen
-            Storage::delete($request->product_image); //Eliminar la imagen actual del producto
+            Storage::delete($request->brand_thumbnail); //Eliminar la imagen actual del producto
             $imagen = $request->image->store('public/imagenes');//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
             $url = Storage::url($imagen);//Guardar la imagen en el Storage
         }else{
-            $url = $request->product_image;
+            $url = $request->brand_thumbnail;
         }
 
         $marca = Brand::findOrFail($request->id);//Se obtiene el objeto producto por el id
