@@ -6,6 +6,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductoUnitController;
+use App\Http\Controllers\TypeProviderController;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -60,6 +61,12 @@ Route::get('/units', [ProductoUnitController::class, 'index']); //mostrar todos 
 Route::post('/units', [ProductoUnitController::class, 'store']); //crear una unidad
 Route::put('/units/{id}', [ProductoUnitController::class, 'update']); //actualizar una unidad
 Route::delete('/units/{id}', [ProductoUnitController::class, 'destroy']); //eliminar una unidad
+
+// Rutas para el controlador TypeProviderController
+Route::get('/type-providers', [TypeProviderController::class, 'index']); //mostrar todos los tipo proveedor
+Route::post('/type-providers', [TypeProviderController::class, 'store']); //crear un tipo proveedor
+Route::put('/type-providers/{id}', [TypeProviderController::class, 'update']); //actualizar un tipo proveedor
+Route::delete('/type-providers/{id}', [TypeProviderController::class, 'destroy']); //eliminar un tipo proveedor
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
