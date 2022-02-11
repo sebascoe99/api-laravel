@@ -110,10 +110,10 @@ class BrandController extends Controller
                 ]);
         }
 
-        $marca = Brand::findOrFail($request->id);//Se obtiene el objeto producto por el id
+        $marca = Brand::findOrFail($request->id);//Se obtiene el objeto marca por el id
 
         if($request->hasFile('image')){//Comprobar si existe la imagen
-            $imagenEliminar = str_replace('storage', 'public', $marca->brand_thumbnail);//reemplazar la palbra storage por public
+            $imagenEliminar = str_replace('storage', 'public', $marca->brand_thumbnail);//reemplazar la palabra storage por public
             Storage::delete($imagenEliminar); //Eliminar la imagen actual de la marca
 
             $extensionImagen = '.'.$request->file('image')->extension();

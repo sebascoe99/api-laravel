@@ -44,10 +44,10 @@ Route::put('/providers/{id}', [ProviderController::class, 'update']); //actualiz
 Route::delete('/providers/{id}', [ProviderController::class, 'destroy']); //eliminar un proveedor
 
 // Rutas para el controlador CategoryController
-Route::get('/categorys', [CategoryController::class, 'index']); //mostrar todos los proveedores
-Route::post('/categorys', [CategoryController::class, 'store']); //crear un proveedor
-Route::put('/categorys/{id}', [CategoryController::class, 'update']); //actualizar un proveedor
-Route::delete('/categorys/{id}', [CategoryController::class, 'destroy']); //eliminar un proveedor
+Route::get('/categories', [CategoryController::class, 'index']); //mostrar todos los proveedores
+Route::post('/categories', [CategoryController::class, 'store']); //crear un proveedor
+Route::put('/categories/{id}', [CategoryController::class, 'update']); //actualizar un proveedor
+Route::delete('/categories/{id}', [CategoryController::class, 'destroy']); //eliminar un proveedor
 
 // Rutas para el controlador BrandController
 Route::get('/brands', [BrandController::class, 'index']); //mostrar todos los proveedores
