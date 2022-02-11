@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Http\Controllers\Provider;
 
 class TypeProvider extends Model
 {
@@ -20,6 +21,6 @@ class TypeProvider extends Model
     use HasFactory;
 
     public function provider(){
-        return $this->hasOne(Provider::class, 'id_type_provider');
+        return $this->belongsTo(Provider::class);
     }
 }

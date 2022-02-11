@@ -21,6 +21,6 @@ class Provider extends Model
     use HasFactory;
 
     public function type_provider(){
-        return $this->belongsTo(TypeProviderController::class);
+        return $this->hasOne(TypeProvider::class, 'id_type_provider');
     }
 }
