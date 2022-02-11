@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProductoCategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\BrandController;
@@ -30,8 +29,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/products/{id}', [ProductoController::class, 'update']); //actualizar un registro
     Route::delete('/products/{id}', 'App\Http\Controllers\ProductoController@destroy'); //eliminar un registro
 
-    // Rutas para el controlador ProductoCategoriaController
-    Route::post('/productCategory', 'App\Http\Controllers\ProductoCategoriaController@store'); //crear un registro
 });*/
 
 // Rutas para el controlador ProductoController

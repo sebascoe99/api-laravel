@@ -24,10 +24,6 @@ class Producto extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s'
     ];
 
-    /*public function productoCategorias(){
-        return $this->hasMany(ProductoCategoria::class, 'id_product');
-    }*/
-
     public function user(){
         return $this->belongsTo(User::class, 'id_user');
     }

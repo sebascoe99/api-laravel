@@ -22,7 +22,6 @@ class ProductoController extends Controller
          $productos = Producto::orderBy('create_date', 'desc')->get()
          ->where("product_status","=",$_ENV['STATUS_ON']);
          return $productos;
-        //$productos = Producto::with('productoCategorias')->get()
         //->where("product_status","=",$_ENV['PRODUCT_STATUS_ON']);
     }
 
@@ -178,8 +177,12 @@ class ProductoController extends Controller
                 ]);
         }
 
+        $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
+
         if($request->hasFile('image')){//Comprobar si existe la imagen
-            Storage::delete($request->product_image); //Eliminar la imagen actual del producto
+            $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palbra storage por public
+            Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
+
             $extensionImagen = '.'.$request->file('image')->extension();//Saber la extension de la imagen
             $nombreSinExtension = trim($request->product_image, $extensionImagen);//Nombre de la imagen sin extension
             $nombreFinal = $nombreSinExtension.'_'.$request->product_code.$extensionImagen;//nombre final ejemplo:"nombreproducto_codigo"
@@ -188,8 +191,6 @@ class ProductoController extends Controller
         }else{
             $url = $request->product_image;
         }
-
-        $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
         $producto->id_user = intval($request->id_user);
         $producto->id_provider = intval($request->id_provider);

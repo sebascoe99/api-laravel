@@ -88,7 +88,6 @@ class BrandController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request){
-        return $request->all();
         try {
             $validator = Validator::make($request->all(), [
                 'brand_name' => 'required',
@@ -111,8 +110,12 @@ class BrandController extends Controller
                 ]);
         }
 
+        $marca = Brand::findOrFail($request->id);//Se obtiene el objeto producto por el id
+
         if($request->hasFile('image')){//Comprobar si existe la imagen
-            Storage::delete($request->brand_thumbnail); //Eliminar la imagen actual del producto
+            $imagenEliminar = str_replace('storage', 'public', $marca->brand_thumbnail);//reemplazar la palbra storage por public
+            Storage::delete($imagenEliminar); //Eliminar la imagen actual de la marca
+
             $extensionImagen = '.'.$request->file('image')->extension();
             $nombreSinExtension = trim($request->brand_thumbnail, $extensionImagen);
             $nombreFinal = $nombreSinExtension.$extensionImagen;
@@ -122,7 +125,6 @@ class BrandController extends Controller
             $url = $request->brand_thumbnail;
         }
 
-        $marca = Brand::findOrFail($request->id);//Se obtiene el objeto producto por el id
         $marca->brand_name = $request->brand_name;
         $marca->brand_thumbnail = $url;
         $marca->brand_status = $request->brand_status;
@@ -149,7 +151,6 @@ class BrandController extends Controller
     public function destroy(Request $request)
     {
         $marca = Brand::findOrFail($request->id);
-        return $request->id;
         $marca->brand_status = $_ENV['STATUS_OFF'];
         if($marca->save()){
             return response()->json([
