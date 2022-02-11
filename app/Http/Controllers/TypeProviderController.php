@@ -106,7 +106,7 @@ class TypeProviderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -154,8 +154,20 @@ class TypeProviderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $tipo_proveedor = TypeProvider::findOrFail($request->id);
+        $tipo_proveedor->type_provider_status = $_ENV['STATUS_OFF'];
+        if($tipo_proveedor->save()){
+            return response()->json([
+                'message' => 'Eliminado correctamente',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
     }
 }
