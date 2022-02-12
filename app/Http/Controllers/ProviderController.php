@@ -30,13 +30,14 @@ class ProviderController extends Controller
      */
     public function store(Request $request)
     {
+        //return $request->all();
         try {
             $validator = Validator::make($request->all(), [
                 'id_type_provider' => 'required',
                 'provider_qualified' => 'required',
                 'provider_identification' => 'required',
                 'provider_name' => 'required',
-                'providerr_address' => 'required',
+                'provider_address' => 'required',
                 'provider_email' => 'required | email',
                 'provider_products_offered' => 'required',
                 'provider_phone' => 'required',
@@ -44,7 +45,6 @@ class ProviderController extends Controller
                 'provider_web_page' => 'required',
                 'provider_person_name' => 'required',
                 'provider_person_lastName' => 'required',
-                'provider_transport' => 'required',
                 'provider_response_time_day' => 'required',
                 'provider_response_time_hour' => 'required',
                 'provider_status' => 'required',
@@ -71,7 +71,7 @@ class ProviderController extends Controller
         $proveedor->provider_qualified = $request->provider_qualified;
         $proveedor->provider_identification = $request->provider_identification;
         $proveedor->provider_name = $request->provider_name;
-        $proveedor->providerr_address = $request->providerr_address;
+        $proveedor->provider_address = $request->provider_address;
         $proveedor->provider_email = $request->provider_email;
         $proveedor->provider_products_offered = $request->provider_products_offered;
         $proveedor->provider_phone = $request->provider_phone;
@@ -79,7 +79,6 @@ class ProviderController extends Controller
         $proveedor->provider_web_page = $request->provider_web_page;
         $proveedor->provider_person_name = $request->provider_person_name;
         $proveedor->provider_person_lastName = $request->provider_person_lastName;
-        $proveedor->provider_transport = $request->provider_transport;
         $proveedor->provider_response_time_day = $request->provider_response_time_day;
         $proveedor->provider_response_time_hour = $request->provider_response_time_hour;
         $proveedor->provider_status = $request->provider_status;
@@ -113,15 +112,14 @@ class ProviderController extends Controller
                 'provider_qualified' => 'required',
                 'provider_identification' => 'required',
                 'provider_name' => 'required',
-                'providerr_address' => 'required',
+                'provider_address' => 'required',
                 'provider_email' => 'required | email',
                 'provider_products_offered' => 'required',
-                'provider_phone' => 'required',
-                'provider_landline' => 'required',
+                'provider_phone' => 'required | max:13',
+                'provider_landline' => 'required | max:13',
                 'provider_web_page' => 'required',
                 'provider_person_name' => 'required',
                 'provider_person_lastName' => 'required',
-                'provider_transport' => 'required',
                 'provider_response_time_day' => 'required',
                 'provider_response_time_hour' => 'required',
                 'provider_status' => 'required',
@@ -148,7 +146,7 @@ class ProviderController extends Controller
         $proveedor->provider_qualified = $request->provider_qualified;
         $proveedor->provider_identification = $request->provider_identification;
         $proveedor->provider_name = $request->provider_name;
-        $proveedor->providerr_address = $request->providerr_address;
+        $proveedor->provider_address = $request->provider_address;
         $proveedor->provider_email = $request->provider_email;
         $proveedor->provider_products_offered = $request->provider_products_offered;
         $proveedor->provider_phone = $request->provider_phone;
@@ -156,7 +154,6 @@ class ProviderController extends Controller
         $proveedor->provider_web_page = $request->provider_web_page;
         $proveedor->provider_person_name = $request->provider_person_name;
         $proveedor->provider_person_lastName = $request->provider_person_lastName;
-        $proveedor->provider_transport = $request->provider_transport;
         $proveedor->provider_response_time_day = $request->provider_response_time_day;
         $proveedor->provider_response_time_hour = $request->provider_response_time_hour;
         $proveedor->provider_status = $request->provider_status;
