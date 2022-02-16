@@ -23,4 +23,8 @@ class Provider extends Model
     public function type_provider(){
         return $this->hasOne(TypeProvider::class, 'id_type_provider');
     }
+
+    public function identification_type(){
+        return $this->hasOne(IdentificationType::class, 'id_identification_type');
+    }
 }

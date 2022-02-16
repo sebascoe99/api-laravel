@@ -17,7 +17,7 @@ class ProviderController extends Controller
      */
     public function index()
     {
-        $proveedores = Provider::with('type_provider')->orderBy('create_date', 'desc')->get();;
+        $proveedores = Provider::with('type_provider', 'identification_type')->orderBy('create_date', 'desc')->get();;
         //Provider::all()->where("provider_status","=",$_ENV['STATUS_ON']);
         return $proveedores;
     }
