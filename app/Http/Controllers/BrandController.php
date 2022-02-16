@@ -17,7 +17,7 @@ class BrandController extends Controller
 
     public function index()
     {
-        $marcas = Brand::all()->where("brand_status","=",$_ENV['STATUS_ON']);
+        $marcas = Brand::orderBy('create_date', 'desc')->get();
         return $marcas;
     }
 

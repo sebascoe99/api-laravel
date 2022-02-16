@@ -16,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categorias = Category::all()->where("category_status","=",$_ENV['STATUS_ON']);
+        $categorias = Category::orderBy('create_date', 'desc')->get();
         return $categorias;
     }
 
