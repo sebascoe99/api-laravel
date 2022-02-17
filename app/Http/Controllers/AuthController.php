@@ -45,6 +45,7 @@ class AuthController extends Controller
 
         $user = new User();
         $user->id_role = $request->id_role;
+        $user->id_type_identification = $request->id_type_identification;
         $user->user_name = $request->user_name;
         $user->user_lastName = $request->user_lastName;
         $user->email = $request->email;
@@ -84,11 +85,17 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        if(isset($token)){
+            return response()->json([
+                'message' => 'Credenciales Correctas',
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'access_token' => $token,
+                'token_type' => 'Bearer'
+            ]);
+        }
         return response()->json([
-            'message' => 'Credenciales Correctas',
-            'status' => $_ENV['CODE_STATUS_OK'],
-            'access_token' => $token,
-            'token_type' => 'Bearer'
+            'message' => 'Ocurrio un error interno en el servidor',
+            'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
         ]);
     }
 
