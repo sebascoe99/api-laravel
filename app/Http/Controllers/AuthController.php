@@ -45,7 +45,7 @@ class AuthController extends Controller
 
         $user = new User();
         $user->id_role = $request->id_role;
-        $user->id_type_identification = $request->id_type_identification;
+        $user->id_identification_type = $request->id_type_identification;
         $user->user_name = $request->user_name;
         $user->user_lastName = $request->user_lastName;
         $user->email = $request->email;
