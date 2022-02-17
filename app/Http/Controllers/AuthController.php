@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,12 +17,14 @@ class AuthController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_role' => 'required',
+                'id_type_identification' => 'required',
                 'user_name' => 'required',
                 'user_lastName' => 'required',
                 'email' => 'required|email',
                 'user_document' => 'required',
                 'password' => 'required',
                 'user_phone' => 'required',
+                'user_address' => 'required'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -48,16 +51,23 @@ class AuthController extends Controller
         $user->user_document = $request->user_document;
         $user->password = Hash::make($request->password);
         $user->user_phone = $request->user_phone;
+        $user->user_address = $request->user_address;
+        $user->user_status = $_ENV['STATUS_ON'];
 
         $user->save();
-
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        if(isset($token)){
+            return response()->json([
+                'message' => 'Usuario creado exitosamente',
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'access_token' => $token,
+                'token_type' => 'Bearer'
+            ]);
+        }
         return response()->json([
-            'message' => 'Usuario creado exitosamente',
-            'status' => $_ENV['CODE_STATUS_OK'],
-            'access_token' => $token,
-            'token_type' => 'Bearer'
+            'message' => 'Ocurrio un error interno en el servidor',
+            'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
         ]);
     }
 

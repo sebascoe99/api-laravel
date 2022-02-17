@@ -34,6 +34,7 @@ class ProviderController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_type_provider' => 'required',
+                'id_identification_type' => 'required',
                 'provider_qualified' => 'required',
                 'provider_identification' => 'required',
                 'provider_name' => 'required',
@@ -68,6 +69,7 @@ class ProviderController extends Controller
 
         $proveedor =  new Provider();
         $proveedor->id_type_provider = $request->id_type_provider;
+        $proveedor->id_identification_type = $request->id_identification_type;
         $proveedor->provider_qualified = $request->provider_qualified;
         $proveedor->provider_identification = $request->provider_identification;
         $proveedor->provider_name = $request->provider_name;
@@ -106,9 +108,11 @@ class ProviderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request){
+        return $request;
         try {
             $validator = Validator::make($request->all(), [
                 'id_type_provider' => 'required',
+                'id_identification_type' => 'required',
                 'provider_qualified' => 'required',
                 'provider_identification' => 'required',
                 'provider_name' => 'required',
@@ -143,6 +147,7 @@ class ProviderController extends Controller
 
         $proveedor = Provider::findOrFail($request->id);
         $proveedor->id_type_provider = $request->id_type_provider;
+        $proveedor->id_identification_type = $request->id_identification_type;
         $proveedor->provider_qualified = $request->provider_qualified;
         $proveedor->provider_identification = $request->provider_identification;
         $proveedor->provider_name = $request->provider_name;

@@ -23,7 +23,8 @@ class User extends Authenticatable
         'user_document',
         'password',
         'user_phone',
-        'updated_at'
+        'updated_at',
+        'user_address'
     ];
 
     protected $table = 'user';
