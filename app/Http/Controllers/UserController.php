@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $usuarios = User::whereNotIn('id_role', [$_ENV['CODE_ROL_CLIENT']])->get();
+        $usuarios = User::with('roleUsers')->whereNotIn('id_role', [$_ENV['CODE_ROL_CLIENT']])->orderBy('create_date', 'desc')->get();
         return $usuarios;
     }
 
@@ -82,14 +82,12 @@ class UserController extends Controller
         $user->user_status = $_ENV['STATUS_ON'];
 
         $user->save();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        //$token = $user->createToken('auth_token')->plainTextToken;
 
-        if(isset($token)){
+        if(isset($user->id_user)){
             return response()->json([
                 'message' => 'Usuario creado exitosamente',
-                'status' => $_ENV['CODE_STATUS_OK'],
-                'access_token' => $token,
-                'token_type' => 'Bearer'
+                'status' => $_ENV['CODE_STATUS_OK']
             ]);
         }
         return response()->json([
@@ -171,16 +169,12 @@ class UserController extends Controller
         $user->user_phone = $request->user_phone;
         $user->user_address = $request->user_address;
         $user->user_status = $_ENV['STATUS_ON'];
+        //$token = $user->createToken('auth_token')->plainTextToken;
 
-        $user->save();
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        if(isset($token)){
+        if($user->save()){
             return response()->json([
                 'message' => 'Usuario actualizado exitosamente',
                 'status' => $_ENV['CODE_STATUS_OK'],
-                'access_token' => $token,
-                'token_type' => 'Bearer'
             ]);
         }
         return response()->json([

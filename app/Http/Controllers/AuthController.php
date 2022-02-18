@@ -56,14 +56,12 @@ class AuthController extends Controller
         $user->user_status = $_ENV['STATUS_ON'];
 
         $user->save();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        //$token = $user->createToken('auth_token')->plainTextToken;
 
-        if(isset($token)){
+        if(isset($user->id_user)){
             return response()->json([
                 'message' => 'Usuario creado exitosamente',
-                'status' => $_ENV['CODE_STATUS_OK'],
-                'access_token' => $token,
-                'token_type' => 'Bearer'
+                'status' => $_ENV['CODE_STATUS_OK']
             ]);
         }
         return response()->json([
