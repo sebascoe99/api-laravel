@@ -17,7 +17,7 @@ class AuthController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_role' => 'required',
-                'id_type_identification' => 'required',
+                'id_identification_type' => 'required',
                 'user_name' => 'required',
                 'user_lastName' => 'required',
                 'email' => 'required|email',
@@ -45,7 +45,7 @@ class AuthController extends Controller
 
         $user = new User();
         $user->id_role = $request->id_role;
-        $user->id_identification_type = $request->id_type_identification;
+        $user->id_identification_type = $request->id_identification_type;
         $user->user_name = $request->user_name;
         $user->user_lastName = $request->user_lastName;
         $user->email = $request->email;
