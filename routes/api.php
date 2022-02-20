@@ -84,6 +84,7 @@ Route::put('/users/{id}', [UserController::class, 'update']); //actualizar un us
 Route::delete('/users/{id}', [UserController::class, 'destroy']); //eliminar un usuario
 
 Route::post('/validate/product/code', [ValidateFieldsController::class, 'validateProductCode']);
+Route::post('/validate/product/name', [ValidateFieldsController::class, 'validateProductName']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
