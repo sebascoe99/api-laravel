@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Audit;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -33,6 +34,7 @@ class BrandController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                'id_user' => 'required',
                 'brand_name' => 'required',
                 'brand_status' => 'required',
             ],
@@ -63,7 +65,7 @@ class BrandController extends Controller
             $url="";
         }
 
-        //DB::enableQueryLog();
+        DB::enableQueryLog();
         $marca =  new Brand();
         $marca->brand_name = $request->brand_name;
         $marca->brand_thumbnail = $url;
@@ -71,6 +73,16 @@ class BrandController extends Controller
         $marca->save();
 
         if(isset($marca->id_brand)){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_INSERCION'];
+            $audit->audit_module = $_ENV['AUDIT_MODULE_BRAND'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Marca creada con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
@@ -93,6 +105,7 @@ class BrandController extends Controller
     public function update(Request $request){
         try {
             $validator = Validator::make($request->all(), [
+                'id_user' => 'required',
                 'brand_name' => 'required',
                 'brand_status' => 'required',
             ],
@@ -113,6 +126,7 @@ class BrandController extends Controller
                 ]);
         }
 
+        DB::enableQueryLog();
         $marca = Brand::findOrFail($request->id);//Se obtiene el objeto marca por el id
 
         if($request->hasFile('image')){//Comprobar si existe la imagen
@@ -133,6 +147,16 @@ class BrandController extends Controller
         $marca->brand_status = $request->brand_status;
 
         if($marca->save()){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
+            $audit->audit_module = $_ENV['AUDIT_MODULE_BRAND'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Marca actualizada con exito',
                 'status' => $_ENV['CODE_STATUS_OK']

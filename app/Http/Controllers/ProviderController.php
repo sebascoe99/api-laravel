@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Audit;
 use App\Models\Provider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 
 class ProviderController extends Controller
@@ -30,9 +32,9 @@ class ProviderController extends Controller
      */
     public function store(Request $request)
     {
-        //return $request->all();
         try {
             $validator = Validator::make($request->all(), [
+                'id_user' => 'required',
                 'id_type_provider' => 'required',
                 'id_identification_type' => 'required',
                 'provider_qualified' => 'required',
@@ -67,6 +69,7 @@ class ProviderController extends Controller
                 ]);
         }
 
+        DB::enableQueryLog();
         $proveedor =  new Provider();
         $proveedor->id_type_provider = intval($request->id_type_provider);
         $proveedor->id_identification_type = intval($request->id_identification_type);
@@ -88,6 +91,16 @@ class ProviderController extends Controller
         $proveedor->save();
 
         if(isset($proveedor->id_provider)){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_INSERCION'];
+            $audit->audit_module = $_ENV['AUDIT_MODULE_PROVIDER'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Proveedor creado con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
@@ -111,6 +124,7 @@ class ProviderController extends Controller
         //return $request;
         try {
             $validator = Validator::make($request->all(), [
+                'id_user' => 'required',
                 'id_type_provider' => 'required',
                 'id_identification_type' => 'required',
                 'provider_qualified' => 'required',
@@ -145,6 +159,7 @@ class ProviderController extends Controller
                 ]);
         }
 
+        DB::enableQueryLog();
         $proveedor = Provider::findOrFail($request->id);
         $proveedor->id_type_provider = intval($request->id_type_provider);
         $proveedor->id_identification_type = intval($request->id_identification_type);
@@ -164,6 +179,16 @@ class ProviderController extends Controller
         $proveedor->provider_status = $request->provider_status;
 
         if($proveedor->save()){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
+            $audit->audit_module = $_ENV['AUDIT_MODULE_PROVIDER'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Proveedor actualizado con exito',
                 'status' => $_ENV['CODE_STATUS_OK']

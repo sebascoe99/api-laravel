@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Audit;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -40,6 +43,7 @@ class CategoryController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                'id_user' => 'required',
                 'category_name' => 'required',
                 'category_descripcion' => 'required',
                 'category_thumbnail' => 'required',
@@ -71,6 +75,7 @@ class CategoryController extends Controller
             $url="";
         }
 
+        DB::enableQueryLog();
         $categoria =  new Category();
         $categoria->category_name = $request->category_name;
         $categoria->category_descripcion = $request->category_descripcion;
@@ -79,6 +84,16 @@ class CategoryController extends Controller
         $categoria->save();
 
         if(isset($categoria->id_category)){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_INSERCION'];
+            $audit->audit_module = $_ENV['AUDIT_MODULE_CATEGORY'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Categoria creada con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
@@ -120,10 +135,11 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
+                'id_user' => 'required',
                 'category_name' => 'required',
                 'category_descripcion' => 'required',
                 'category_thumbnail' => 'required',
@@ -146,6 +162,7 @@ class CategoryController extends Controller
                 ]);
         }
 
+        DB::enableQueryLog();
         $categoria = Category::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
         if($request->hasFile('image')){//Comprobar si existe la imagen y no tenga valor null
@@ -167,6 +184,16 @@ class CategoryController extends Controller
         $categoria->category_status = $request->category_status;
 
         if($categoria->save()){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
+            $audit->audit_module = $_ENV['AUDIT_MODULE_CATEGORY'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Categoria actualizada con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
