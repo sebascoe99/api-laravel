@@ -9,6 +9,7 @@ use App\Http\Controllers\IdentificationTypeController;
 use App\Http\Controllers\ProductoUnitController;
 use App\Http\Controllers\TypeProviderController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ValidateFieldsController;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -81,6 +82,8 @@ Route::get('/users', [UserController::class, 'index']); //mostrar todos los usua
 Route::post('/users', [UserController::class, 'store']); //crear un usuario
 Route::put('/users/{id}', [UserController::class, 'update']); //actualizar un usuario
 Route::delete('/users/{id}', [UserController::class, 'destroy']); //eliminar un usuario
+
+Route::post('/validate/product/code', [ValidateFieldsController::class, 'validateProductCode']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

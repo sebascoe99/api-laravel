@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Audit;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -84,6 +86,7 @@ class ProductoController extends Controller
             $url="";
         }
 
+        DB::enableQueryLog();
         $producto =  new Producto();
         $producto->id_user = intval($request->id_user);
         $producto->id_provider = intval($request->id_provider);
@@ -101,6 +104,16 @@ class ProductoController extends Controller
         $producto->save();
 
         if(isset($producto->id_product)){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_INSERCION'];
+            $audit->audit_module = $_ENV['AUDIT_MODULE_PRODUCT'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Producto creado con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
@@ -176,6 +189,7 @@ class ProductoController extends Controller
                 ]);
         }
 
+        DB::enableQueryLog();
         $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
         if($request->hasFile('image')){//Comprobar si existe la imagen
@@ -206,6 +220,16 @@ class ProductoController extends Controller
         $producto->product_rating = intval($request->product_rating);
 
         if($producto->save()){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
+            $audit->audit_module = $_ENV['AUDIT_MODULE_PRODUCT'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Producto actualizado con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
@@ -226,6 +250,7 @@ class ProductoController extends Controller
      */
     public function destroy(Request $request)
     {
+        //DB::enableQueryLog();
         $producto = Producto::findOrFail($request->id);
         $producto->product_status = $_ENV['STATUS_OFF'];
         if($producto->save()){

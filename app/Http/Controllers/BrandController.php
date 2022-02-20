@@ -6,6 +6,8 @@ use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class BrandController extends Controller
 {
@@ -61,6 +63,7 @@ class BrandController extends Controller
             $url="";
         }
 
+        //DB::enableQueryLog();
         $marca =  new Brand();
         $marca->brand_name = $request->brand_name;
         $marca->brand_thumbnail = $url;
