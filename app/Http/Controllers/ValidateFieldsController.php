@@ -15,41 +15,22 @@ class ValidateFieldsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function validateProductCode(Request $request){
-        try {
-            $validator = Validator::make($request->all(), [
-                'product_code' => 'required',
-            ],
-            [
-                'required' => 'El campo :attribute es requerido'
-            ]);
+    public function validateProductCode(){
+        $product_code = Producto::whereRaw('product_code = (select max(`product_code`) from product)')->pluck('product_code')->first();
 
-            if($validator->fails()){
-                return response()->json([
-                    'message' => $validator->errors(),
-                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
-                ]);
-            }
-        }catch (\Exception $e){
-                return response()->json([
-                    'message' => $e->getMessage(),
-                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
-                ]);
-        }
-
-        if(Producto::where('product_code', $request->product_code)->exists()){
+        if(isset($product_code)){
             return response()->json([
-                'message' => "Existe",
+                'message' => $product_code + 1,
                 'status' => $_ENV['CODE_STATUS_OK']
             ]);
         }else{
             return response()->json([
-                'message' => "No existe",
-                'status' => $_ENV['CODE_STATUS_OK']
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
             ]);
         }
     }
-    
+
     /**
      * Validate field product name.
      *
