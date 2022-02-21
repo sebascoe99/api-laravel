@@ -72,7 +72,7 @@ class AuthController extends Controller
 
     public function login(Request $request){
         //return $request;
-        if (!Auth::attempt($request->only('email', 'password'))){
+        if (!Auth::attempt($request->only('email', 'password') + ['user_status' => $_ENV['STATUS_ON']])){
             return response()->json([
                 'message' => 'Credenciales Invalidas',
                 'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']

@@ -157,7 +157,7 @@ class UserController extends Controller
 
         $user = User::findOrFail($request->id);
         $user->id_role = intval($request->id_role);
-        $user->id_identification_type = intval($request->id_type_identification);
+        $user->id_identification_type = intval($request->id_identification_type);
         $user->user_name = $request->user_name;
         $user->user_lastName = $request->user_lastName;
         $user->email = $request->email;
