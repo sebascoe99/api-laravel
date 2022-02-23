@@ -18,4 +18,8 @@ class Category extends Model
     ];
 
     use HasFactory;
+
+    public function producto(){
+        return $this->hasOne(Producto::class, 'id_category');
+    }
 }

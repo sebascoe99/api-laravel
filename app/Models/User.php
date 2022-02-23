@@ -56,8 +56,8 @@ class User extends Authenticatable
     ];
 
 
-    public function roleUsers(){
-        return $this->hasOne(RoleUser::class, 'id_role');
+    public function roleUser(){
+        return $this->belongsTo(RoleUser::class, 'id_role');
     }
 
     public function productos(){

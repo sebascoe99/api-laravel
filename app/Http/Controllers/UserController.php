@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $usuarios = User::with('roleUsers')->whereNotIn('id_role', [$_ENV['CODE_ROL_CLIENT']])->orderBy('create_date', 'desc')->get();
+        $usuarios = User::with('roleUser')->whereNotIn('id_role', [$_ENV['CODE_ROL_CLIENT']])->orderBy('create_date', 'desc')->get();
         return $usuarios;
     }
 

@@ -24,6 +24,14 @@ class Producto extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s'
     ];
 
+    public function brand(){
+        return $this->belongsTo(Brand::class, 'id_brand');
+    }
+
+    public function category(){
+        return $this->belongsTo(Category::class, 'id_category');
+    }
+
     public function user(){
         return $this->belongsTo(User::class, 'id_user');
     }
