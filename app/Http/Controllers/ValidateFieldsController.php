@@ -30,7 +30,6 @@ class ValidateFieldsController extends Controller
             ]);
         }
     }
-
     /**
      * Validate field product name.
      *

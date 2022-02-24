@@ -34,9 +34,9 @@ class ProviderController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required',
-                'id_type_provider' => 'required',
-                'id_identification_type' => 'required',
+                'id_user' => 'required|numeric|min:0|not_in:0',
+                'id_type_provider' => 'required|numeric|min:0|not_in:0',
+                'id_identification_type' => 'required|numeric|min:0|not_in:0',
                 'provider_qualified' => 'required',
                 'provider_identification' => 'required',
                 'provider_name' => 'required',
@@ -124,9 +124,9 @@ class ProviderController extends Controller
         //return $request;
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required',
-                'id_type_provider' => 'required',
-                'id_identification_type' => 'required',
+                'id_user' => 'required|numeric|min:0|not_in:0',
+                'id_type_provider' => 'required|numeric|min:0|not_in:0',
+                'id_identification_type' => 'required|numeric|min:0|not_in:0',
                 'provider_qualified' => 'required',
                 'provider_identification' => 'required',
                 'provider_name' => 'required',

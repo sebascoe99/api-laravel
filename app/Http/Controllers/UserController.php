@@ -42,8 +42,8 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_role' => 'required',
-                'id_identification_type' => 'required|numeric|not_in:0',
+                'id_role' => 'required|numeric|min:0|not_in:0',
+                'id_identification_type' => 'required|numeric|min:0|not_in:0',
                 'user_name' => 'required',
                 'user_lastName' => 'required',
                 'email' => 'required|email',
@@ -129,7 +129,7 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_role' => 'required',
+                'id_role' => 'required|numeric|min:0|not_in:0',
                 'id_identification_type' => 'required|numeric|min:0|not_in:0',
                 'user_name' => 'required',
                 'user_lastName' => 'required',

@@ -48,11 +48,11 @@ class ProductoController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required',
-                'id_provider' => 'required',
-                'id_brand' => 'required',
-                'id_category' => 'required',
-                'id_product_unit' => 'required',
+                'id_user' => 'required|numeric|min:0|not_in:0',
+                'id_provider' => 'required|numeric|min:0|not_in:0',
+                'id_brand' => 'required|numeric|min:0|not_in:0',
+                'id_category' => 'required|numeric|min:0|not_in:0',
+                'id_product_unit' => 'required|numeric|min:0|not_in:0',
                 'product_name' => 'required',
                 'product_stock' => 'required',
                 'product_code' => 'required',
@@ -161,11 +161,11 @@ class ProductoController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required',
-                'id_provider' => 'required',
-                'id_brand' => 'required',
-                'id_category' => 'required',
-                'id_product_unit' => 'required',
+                'id_user' => 'required|numeric|min:0|not_in:0',
+                'id_provider' => 'required|numeric|min:0|not_in:0',
+                'id_brand' => 'required|numeric|min:0|not_in:0',
+                'id_category' => 'required|numeric|min:0|not_in:0',
+                'id_product_unit' => 'required|numeric|min:0|not_in:0',
                 'product_name' => 'required',
                 'product_stock' => 'required',
                 'product_code' => 'required',
@@ -266,5 +266,16 @@ class ProductoController extends Controller
                 'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
             ]);
         }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function uploadExcel(Request $request)
+    {
+        
     }
 }
