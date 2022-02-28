@@ -166,8 +166,10 @@ class CategoryController extends Controller
         $categoria = Category::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
         if($request->hasFile('image')){//Comprobar si existe la imagen y no tenga valor null
-            $imagenEliminar = str_replace('storage', 'public', $categoria->category_thumbnail);//reemplazar la palabra storage por public
-            Storage::delete($imagenEliminar); //Eliminar la imagen actual de la categoria
+            if(isset($categoria->category_thumbnail) && !is_null($categoria->category_thumbnail)){
+                $imagenEliminar = str_replace('storage', 'public', $categoria->category_thumbnail);//reemplazar la palabra storage por public
+                Storage::delete($imagenEliminar); //Eliminar la imagen actual de la categoria
+            }
 
             $extensionImagen = '.'.$request->file('image')->extension();
             $nombreSinExtension = trim($request->category_thumbnail, $extensionImagen);
@@ -175,7 +177,11 @@ class CategoryController extends Controller
             $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
             $url = Storage::url($imagen);//Guardar la imagen en el Storage
         }else{
-            $url = $request->category_thumbnail;
+            if(isset($categoria->category_thumbnail) && !is_null($categoria->category_thumbnail)){
+                $imagenEliminar = str_replace('storage', 'public', $categoria->category_thumbnail);//reemplazar la palabra storage por public
+                Storage::delete($imagenEliminar); //Eliminar la imagen actual de la categoria
+            }
+            $url="";
         }
 
         $categoria->category_name = $request->category_name;

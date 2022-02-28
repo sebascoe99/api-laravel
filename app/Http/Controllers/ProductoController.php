@@ -219,7 +219,6 @@ class ProductoController extends Controller
             if(isset($producto->product_image) && !is_null($producto->product_image)){
                 $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
                 Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
-
             }
             $url="";
         }
