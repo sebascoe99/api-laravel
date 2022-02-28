@@ -18,6 +18,8 @@ use App\Models\Provider;
 use Maatwebsite\Excel\HeadingRowImport;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
+use function PHPUnit\Framework\isNull;
+
 class ProductoController extends Controller
 {
     /**
@@ -203,8 +205,10 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
         if($request->hasFile('image')){//Comprobar si existe la imagen
-            $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palbra storage por public
-            Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
+            if(isset($producto->product_image) && !isNull($producto->product_image)){
+                $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
+                Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
+            }
 
             $extensionImagen = '.'.$request->file('image')->extension();//Saber la extension de la imagen
             $nombreSinExtension = trim($request->product_image, $extensionImagen);//Nombre de la imagen sin extension
@@ -212,7 +216,11 @@ class ProductoController extends Controller
             $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//almacenar la imagen en 'public/imagenes'
             $url = Storage::url($imagen);//Guardar la imagen en el Storage
         }else{
-            $url = $request->product_image;
+            if(isset($producto->product_image) && !isNull($producto->product_image)){
+                $url = $request->product_image;
+            }else{
+                $url="";
+            }
         }
 
         $producto->id_user = intval($request->id_user);
