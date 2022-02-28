@@ -205,7 +205,7 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
         if($request->hasFile('image')){//Comprobar si existe la imagen
-            if(isset($producto->product_image) && !isNull($producto->product_image)){
+            if(isset($producto->product_image) && !is_null($producto->product_image)){
                 $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
                 Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
             }
@@ -216,11 +216,12 @@ class ProductoController extends Controller
             $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//almacenar la imagen en 'public/imagenes'
             $url = Storage::url($imagen);//Guardar la imagen en el Storage
         }else{
-            if(isset($producto->product_image) && !isNull($producto->product_image)){
-                $url = $request->product_image;
-            }else{
-                $url="";
+            if(isset($producto->product_image) && !is_null($producto->product_image)){
+                $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
+                Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
+
             }
+            $url="";
         }
 
         $producto->id_user = intval($request->id_user);
