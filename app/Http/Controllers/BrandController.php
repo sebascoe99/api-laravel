@@ -79,6 +79,7 @@ class BrandController extends Controller
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_INSERCION'];
+            $audit->audit_description = 'Se agregó nueva marca'.' con nombre ' . $marca->brand_name;
             $audit->audit_module = $_ENV['AUDIT_MODULE_BRAND'];
             $audit->audit_query = $queryStr;
             $audit->save();
@@ -159,6 +160,7 @@ class BrandController extends Controller
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
+            $audit->audit_description = 'Se actualizo la marca'.' con nombre ' . $marca->brand_name;
             $audit->audit_module = $_ENV['AUDIT_MODULE_BRAND'];
             $audit->audit_query = $queryStr;
             $audit->save();
