@@ -63,4 +63,8 @@ class User extends Authenticatable
     public function productos(){
         return $this->hasMany(Producto::class);
     }
+
+    public function audit(){
+        return $this->hasOne(Audit::class, 'id_audit');
+    }
 }

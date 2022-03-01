@@ -205,14 +205,14 @@ class ProductoController extends Controller
 
         DB::enableQueryLog();
         $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
-
         if($request->hasFile('image')){//Comprobar si existe la imagen
             $url = $this->agregarImagen($request, $producto);
         }else{
             $url="";
-            if(isset($request->product_image) && !is_null($request->product_image)){//Cuando no se envia una nueva imagen y se mantiene la misma url en product_image
+            if(isset($request->product_image) && !(is_null($request->product_image))){//Cuando no se envia una nueva imagen y se mantiene la misma url en product_image
                 $url = $request->product_image;//Se mantiene la misma url asociada a esa imagen
-            }else{//Cuando se elimina por completo la url, es decir no quiere tener asociado una imagen a ese producto
+            }
+            else{//Cuando se elimina por completo la url, es decir no quiere tener asociado una imagen a ese producto
                 if(isset($producto->product_image) && !is_null($producto->product_image)){//Preguntar si existia una imagen asociada al producto para borrarla del storage
                     $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
                     Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto

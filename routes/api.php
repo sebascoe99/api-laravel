@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\BrandController;
@@ -78,11 +79,14 @@ Route::post('/identification_type', [IdentificationTypeController::class, 'store
 Route::put('/identification_type/{id}', [IdentificationTypeController::class, 'update']); //actualizar un tipo proveedor
 Route::delete('/identification_type/{id}', [IdentificationTypeController::class, 'destroy']); //eliminar un tipo proveedor
 
-// Rutas para el controlador TypeProviderController
+// Rutas para el controlador UserController
 Route::get('/users', [UserController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes
 Route::post('/users', [UserController::class, 'store']); //crear un usuario
 Route::put('/users/{id}', [UserController::class, 'update']); //actualizar un usuario
 Route::delete('/users/{id}', [UserController::class, 'destroy']); //eliminar un usuario
+
+// Rutas para el controlador AuditController
+Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes
 
 Route::get('/validate/product/code', [ValidateFieldsController::class, 'validateProductCode']);
 Route::post('/validate/product/name', [ValidateFieldsController::class, 'validateProductName']);
