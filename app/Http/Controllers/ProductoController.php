@@ -56,6 +56,7 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
+        return $request->all();
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
@@ -206,22 +207,17 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($request->id);//Se obtiene el objeto producto por el id
 
         if($request->hasFile('image')){//Comprobar si existe la imagen
-            if(isset($producto->product_image) && !is_null($producto->product_image)){
-                $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
-                Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
-            }
-
-            $extensionImagen = '.'.$request->file('image')->extension();//Saber la extension de la imagen
-            $nombreSinExtension = trim($request->product_image, $extensionImagen);//Nombre de la imagen sin extension
-            $nombreFinal = $nombreSinExtension.'_'.$request->product_code.$extensionImagen;//nombre final ejemplo:"nombreproducto_codigo"
-            $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//almacenar la imagen en 'public/imagenes'
-            $url = Storage::url($imagen);//Guardar la imagen en el Storage
+            $url = $this->agregarImagen($request, $producto);
         }else{
-            if(isset($producto->product_image) && !is_null($producto->product_image)){
-                $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
-                Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
-            }
             $url="";
+            if(isset($request->product_image) && !is_null($request->product_image)){//Cuando no se envia una nueva imagen y se mantiene la misma url en product_image
+                $url = $request->product_image;//Se mantiene la misma url asociada a esa imagen
+            }else{//Cuando se elimina por completo la url, es decir no quiere tener asociado una imagen a ese producto
+                if(isset($producto->product_image) && !is_null($producto->product_image)){//Preguntar si existia una imagen asociada al producto para borrarla del storage
+                    $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
+                    Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
+                }
+            }
         }
 
         $producto->id_user = intval($request->id_user);
@@ -262,6 +258,21 @@ class ProductoController extends Controller
         }
     }
 
+    function agregarImagen(Request $request, Producto $producto)
+    {
+        if(isset($producto->product_image) && !is_null($producto->product_image)){
+            $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
+            Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
+        }
+
+        $extensionImagen = '.'.$request->file('image')->extension();//Saber la extension de la imagen
+        $nombreSinExtension = trim($request->product_image, $extensionImagen);//Nombre de la imagen sin extension
+        $nombreFinal = $nombreSinExtension.'_'.$request->product_code.$extensionImagen;//nombre final ejemplo:"nombreproducto_codigo"
+        $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//almacenar la imagen en 'public/imagenes'
+        $url = Storage::url($imagen);//Guardar la imagen en el Storage
+        return $url;
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -294,12 +305,14 @@ class ProductoController extends Controller
      */
     public function uploadExcel(Request $request)
     {
-        if($request->hasFile('excel')){}
-            /*$import = new ProductosImport();
-            $column= (new HeadingRowImport)->toArray($request->file('excel'));
-            return $column;
-            //Excel::import($import, $request->file('excel'));*/
-            $the_file = $request->file('excel');
+        if(!($request->hasFile('excel'))){
+            return response()->json([
+                'message' => "No existe archivo",
+                'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+            ]);
+        }
+        return "Si hay archivo";
+        $the_file = $request->file('excel');
        try{
            $spreadsheet = IOFactory::load($the_file->getRealPath());
            $sheet        = $spreadsheet->getActiveSheet();

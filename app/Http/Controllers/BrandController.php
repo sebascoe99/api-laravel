@@ -131,22 +131,17 @@ class BrandController extends Controller
         $marca = Brand::findOrFail($request->id);//Se obtiene el objeto marca por el id
 
         if($request->hasFile('image')){//Comprobar si existe la imagen
-            if(isset($marca->brand_thumbnail) && !is_null($marca->brand_thumbnail)){
-                $imagenEliminar = str_replace('storage', 'public', $marca->brand_thumbnail);//reemplazar la palabra storage por public
-                Storage::delete($imagenEliminar); //Eliminar la imagen actual de la marca
-            }
-
-            $extensionImagen = '.'.$request->file('image')->extension();
-            $nombreSinExtension = trim($request->brand_thumbnail, $extensionImagen);
-            $nombreFinal = $nombreSinExtension.$extensionImagen;
-            $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
-            $url = Storage::url($imagen);//Guardar la imagen en el Storage
+            $url = $this->agregarImagen($request, $marca);
         }else{
-            if(isset($marca->brand_thumbnail) && !is_null($marca->brand_thumbnail)){
-                $imagenEliminar = str_replace('storage', 'public', $marca->brand_thumbnail);//reemplazar la palabra storage por public
-                Storage::delete($imagenEliminar); //Eliminar la imagen actual de la marca
-            }
             $url="";
+            if(isset($request->brand_thumbnail) && !is_null($request->brand_thumbnail)){
+                $url = $request->brand_thumbnail;
+            }else{
+                if(isset($marca->brand_thumbnail) && !is_null($marca->brand_thumbnail)){
+                    $imagenEliminar = str_replace('storage', 'public', $marca->brand_thumbnail);//reemplazar la palabra storage por public
+                    Storage::delete($imagenEliminar); //Eliminar la imagen actual de la marca
+                }
+            }
         }
 
         $marca->brand_name = $request->brand_name;
@@ -175,6 +170,21 @@ class BrandController extends Controller
                 'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
             ]);
         }
+    }
+
+    function agregarImagen(Request $request, Brand $marca)
+    {
+        if(isset($marca->brand_thumbnail) && !is_null($marca->brand_thumbnail)){
+            $imagenEliminar = str_replace('storage', 'public', $marca->brand_thumbnail);//reemplazar la palabra storage por public
+            Storage::delete($imagenEliminar); //Eliminar la imagen actual de la marca
+        }
+
+        $extensionImagen = '.'.$request->file('image')->extension();
+        $nombreSinExtension = trim($request->brand_thumbnail, $extensionImagen);
+        $nombreFinal = $nombreSinExtension.$extensionImagen;
+        $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
+        $url = Storage::url($imagen);//Guardar la imagen en el Storage
+        return $url;
     }
 
     /**
