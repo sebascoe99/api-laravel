@@ -170,10 +170,10 @@ class CategoryController extends Controller
             $url = $this->agregarImagen($request, $categoria);
         }else{
             $url="";
-            if(isset($request->category_thumbnail) && !is_null($request->category_thumbnail)){
+            if(isset($request->category_thumbnail) && !(is_null($request->category_thumbnail))){
                 $url = $request->category_thumbnail;
             }else{
-                if(isset($categoria->category_thumbnail) && !is_null($categoria->category_thumbnail)){
+                if(isset($categoria->category_thumbnail) && !(is_null($categoria->category_thumbnail))){
                     $imagenEliminar = str_replace('storage', 'public', $categoria->category_thumbnail);//reemplazar la palabra storage por public
                     Storage::delete($imagenEliminar); //Eliminar la imagen actual de la categoria
                 }
@@ -232,9 +232,42 @@ class CategoryController extends Controller
      */
     public function destroy(Request $request)
     {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        DB::enableQueryLog();
         $categoria = Category::findOrFail($request->id);
         $categoria->category_status = $_ENV['STATUS_OFF'];
         if($categoria->save()){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ELIMINACION'];
+            $audit->audit_description = 'Se elimino la categoria'.' con nombre ' . $categoria->category_name;
+            $audit->audit_module = $_ENV['AUDIT_MODULE_CATEGORY'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Eliminado correctamente',
                 'status' => $_ENV['CODE_STATUS_OK']

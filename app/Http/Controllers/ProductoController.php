@@ -213,7 +213,7 @@ class ProductoController extends Controller
                 $url = $request->product_image;//Se mantiene la misma url asociada a esa imagen
             }
             else{//Cuando se elimina por completo la url, es decir no quiere tener asociado una imagen a ese producto
-                if(isset($producto->product_image) && !is_null($producto->product_image)){//Preguntar si existia una imagen asociada al producto para borrarla del storage
+                if(isset($producto->product_image) && !(is_null($producto->product_image))){//Preguntar si existia una imagen asociada al producto para borrarla del storage
                     $imagenEliminar = str_replace('storage', 'public', $producto->product_image);//reemplazar la palabra storage por public
                     Storage::delete($imagenEliminar); //Eliminar la imagen actual del producto
                 }
@@ -281,10 +281,42 @@ class ProductoController extends Controller
      */
     public function destroy(Request $request)
     {
-        //DB::enableQueryLog();
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        DB::enableQueryLog();
         $producto = Producto::findOrFail($request->id);
         $producto->product_status = $_ENV['STATUS_OFF'];
         if($producto->save()){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ELIMINACION'];
+            $audit->audit_description = 'Se elimino el producto'.' con codigo ' . $producto->product_code;
+            $audit->audit_module = $_ENV['AUDIT_MODULE_PRODUCT'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Eliminado correctamente',
                 'status' => $_ENV['CODE_STATUS_OK']
@@ -311,7 +343,6 @@ class ProductoController extends Controller
                 'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
             ]);
         }
-        return "Si hay archivo";
         $the_file = $request->file('excel');
        try{
            $spreadsheet = IOFactory::load($the_file->getRealPath());

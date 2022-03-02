@@ -211,9 +211,42 @@ class ProviderController extends Controller
      */
     public function destroy(Request $request)
     {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        DB::enableQueryLog();
         $proveedor = Provider::findOrFail($request->id);
         $proveedor->provider_status = $_ENV['STATUS_OFF'];
         if($proveedor->save()){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ELIMINACION'];
+            $audit->audit_description = 'Se elimino el proveedor'.' con nombre ' . $proveedor->provider_name;
+            $audit->audit_module = $_ENV['AUDIT_MODULE_PROVIDER'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Eliminado correctamente',
                 'status' => $_ENV['CODE_STATUS_OK']
