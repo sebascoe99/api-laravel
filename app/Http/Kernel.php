@@ -24,7 +24,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\Cors::class,
     ];
 
-    
+
     /**
      * The application's route middleware groups.
      *

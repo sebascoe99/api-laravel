@@ -90,6 +90,8 @@ Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usu
 
 Route::get('/validate/product/code', [ValidateFieldsController::class, 'validateProductCode']);
 Route::post('/validate/product/name', [ValidateFieldsController::class, 'validateProductName']);
+Route::post('/validate/user/email', [ValidateFieldsController::class, 'validateUserEmail']);
+Route::post('/validate/user/identification', [ValidateFieldsController::class, 'validateUserIdentification']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
