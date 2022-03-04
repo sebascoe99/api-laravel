@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller
 {
@@ -77,6 +78,7 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->user_document = $request->user_document;
         $user->password = Hash::make($request->password);
+        $user->password_encrypt = Crypt::encryptString($request->password);
         $user->user_phone = $request->user_phone;
         $user->user_address = $request->user_address;
         $user->user_status = $_ENV['STATUS_ON'];
@@ -163,8 +165,10 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->user_document = $request->user_document;
 
-        if(isset($request->password))
+        if(isset($request->password)){
             $user->password = Hash::make($request->password);
+            $user->password_encrypt = Crypt::encryptString($request->password);
+        }
 
         $user->user_phone = $request->user_phone;
         $user->user_address = $request->user_address;

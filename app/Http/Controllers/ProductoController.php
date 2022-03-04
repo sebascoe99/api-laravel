@@ -56,7 +56,6 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',

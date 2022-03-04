@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Crypt;
 
 class AuthController extends Controller
 {
@@ -51,6 +51,7 @@ class AuthController extends Controller
         $user->email = $request->email;
         $user->user_document = $request->user_document;
         $user->password = Hash::make($request->password);
+        $user->password_encrypt = Crypt::encryptString($request->password);
         $user->user_phone = $request->user_phone;
         $user->user_address = $request->user_address;
         $user->user_status = $_ENV['STATUS_ON'];

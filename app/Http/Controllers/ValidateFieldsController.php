@@ -6,7 +6,10 @@ use App\Models\Producto;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 class ValidateFieldsController extends Controller
 {
     /**
@@ -142,6 +145,7 @@ class ValidateFieldsController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
         }
+
         $indentification = User::where('user_document', $request->user_document)->first();
 
         if(isset($indentification)){
@@ -155,6 +159,60 @@ class ValidateFieldsController extends Controller
                 'status' => $_ENV['CODE_STATUS_OK']
             ]);
         }
+    }
+
+    /**
+     * Validate field user_document from table user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function validateUserPassword(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required',
+                'password' => 'required',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+
+        $user = User::where('id_user', $request->id_user)->first();
+
+        if(isset($user)){
+            $decrypt = Crypt::decryptString($user->password_encrypt);
+
+            if($decrypt == $request->password){
+                return response()->json([
+                    'message' => "Coincide",
+                    'status' => $_ENV['CODE_STATUS_OK'],
+                ]);
+            }else{
+                return response()->json([
+                    'message' => "No Coincide",
+                    'status' => $_ENV['CODE_STATUS_OK'],
+                ]);
+            }
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+
     }
 
 }
