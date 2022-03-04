@@ -390,156 +390,159 @@ class ProductoController extends Controller
            $arregloUnidades = ProductoUnit::orderBy('create_date', 'desc')->get();//Obtener el arreglo de todos las Unidades
 
             foreach($data as $producto){
+
                 if(!empty($producto['codigo']) && is_numeric($producto['codigo']) && $producto['codigo'] > 0){//Comprobar si el campo codigo del excel no este vacio, no sea numerico o sea negativo
+                    if(isset($producto['medida']) && !(empty($producto['medida'])) && !(is_null($producto['medida']))){
+                        if(isset($producto['articulo']) && !(empty($producto['articulo'])) && !(is_null($producto['articulo']))){
+                            if(is_numeric($producto['precio1']) && $producto['precio1'] >= 0){
+                                if(is_numeric($producto['tbodega']) && $producto['tbodega'] >=0){
 
-                    $productoPorCodigo = Producto::where('product_code', $producto['codigo'])->first();//Obtener el producto correspondiente a ese codigo registrado en la BD
-                    if(isset($productoPorCodigo) && !(is_null($productoPorCodigo))){ //Comprobar si existe el codigo del registro de excel en la BD
-                        //$productoPorCodigo = Producto::where('product_code', $producto['codigo'])->first();//Obtener el producto correspondiente a ese codigo registrado en la BD
+                                    $productoPorCodigo = Producto::where('product_code', $producto['codigo'])->first();//Obtener el producto correspondiente a ese codigo registrado en la B
 
-                        $existeUnidad= false; $idUnidad = 1; $id_no_definido_unidad = 1;
-                        foreach ($arregloUnidades as $uni) {
-                            if ($uni->description_product_unit == $producto['medida']) {
-                                $existeUnidad = true;
-                                $idUnidad = $uni->id_product_unit;
-                                //break;
+                                    if(isset($productoPorCodigo) && !(is_null($productoPorCodigo))){ //Comprobar si existe el codigo del registro de excel en la BD
+
+                                        $id_product_unit_medida = ProductoUnit::where('description_product_unit', $producto['medida'])->pluck('id_product_unit')->first();
+
+                                        if(isset($id_product_unit_medida) && !(is_null($id_product_unit_medida))){
+
+                                            if(!($productoPorCodigo->product_code == $producto['codigo'] && $productoPorCodigo->id_product_unit ==  $id_product_unit_medida &&
+                                               $productoPorCodigo->product_name == $producto['articulo'] && $productoPorCodigo->product_price == $producto['precio1'] &&
+                                               $productoPorCodigo->product_stock == $producto['tbodega'])){
+
+                                                $existeUnidad= false; $idUnidad = 1; $id_no_definido_unidad = 1;
+                                                foreach ($arregloUnidades as $uni) {
+                                                    if ($uni->description_product_unit == $producto['medida']) {
+                                                        $existeUnidad = true;
+                                                        $idUnidad = $uni->id_product_unit;
+                                                        //break;
+                                                    }
+
+                                                    if ($uni->description_product_unit == $_ENV['NO_DEFINIDO']) {
+                                                        $id_no_definido_unidad = $uni->id_product_unit;
+                                                        //break;
+                                                    }
+                                                }
+
+                                                if($existeUnidad){ //Comprobar si existe la unidad del registro de excel
+                                                    if(!($productoPorCodigo->id_product_unit == $idUnidad)){//Comprobar si dicha unidad es diferente a la registrada en la BD
+                                                        $productoPorCodigo->id_product_unit = intval($idUnidad);//Setear nuevo id de unidad en el producto registrado en la BD
+                                                    }
+                                                }
+                                                else{
+                                                    $productoPorCodigo->id_product_unit = intval($id_no_definido_unidad);// Setear dicho id de la unidad no definida en el producto registrado en BD
+                                                }
+
+                                                $productoPorNombre = Producto::where('product_name', $producto['articulo'])->first();//Obtener el producto correspondiente a ese nombre en BD
+
+                                                if(isset($productoPorNombre) && !(is_null($productoPorNombre))){//Comprobar si existe el nombre del registro de excel si existe en BD
+                                                    if(!($productoPorNombre->product_code == $producto['codigo'])){//Comprobar si dicho id del codigo es diferente a la registrada en la BD
+                                                        $productoPorCodigo->product_name = $producto['articulo'];//Si es diferente setear nuevo nombre en la BD
+                                                    }
+                                                }
+                                                else{
+                                                    $productoPorCodigo->product_name = $producto['articulo'];//Setear nuevo nombre en la BD
+                                                }
+
+                                                if(!($productoPorCodigo->product_price == ($producto['precio1']))){//Comprobar si se mantiene el mismo precio
+                                                    $productoPorCodigo->product_price = $producto['precio1'];//Setear nuevo precio
+                                                }
+
+                                                if(!($productoPorCodigo->product_stock == intval($producto['tbodega']))){//Comprobar si se mantiene el mismo stock
+                                                    $productoPorCodigo->product_stock = $producto['tbodega'];//Setear nuevo stock
+                                                }
+
+                                                $productoPorCodigo->id_user = intval($request->id_user);
+                                                if(!$productoPorCodigo->save()){
+                                                    return response()->json([
+                                                        'message' => 'Ocurrio un error interno en el servidor',
+                                                        'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                                                    ]);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        $productoNuevo =  new Producto();
+
+                                        $productoPorNombre = Producto::where('product_name', $producto['articulo'])->first();//Obtener el producto correspondiente a ese nombre en BD
+
+                                        $existeUnidad= false; $idUnidad = 1; $id_no_definido_unidad = 1;
+                                        foreach ($arregloUnidades as $uni) {
+                                            if ($uni->description_product_unit == $producto['medida']) {
+                                                $existeUnidad = true;
+                                                $idUnidad = $uni->id_product_unit;
+                                            }
+
+                                            if ($uni->description_product_unit == $_ENV['NO_DEFINIDO']) {
+                                                $id_no_definido_unidad = $uni->id_product_unit;
+                                            }
+                                        }
+
+                                        if($existeUnidad){ //Comprobar si existe la unidad del registro de excel en la BD
+                                            $productoNuevo->id_product_unit = intval($idUnidad);//Setear nuevo id de unidad en el producto nuevo en la BD
+                                        }
+                                        else{
+                                            $productoNuevo->id_product_unit = intval($id_no_definido_unidad);// Setear dicho id de la unidad no definida en el producto registrado en BD
+                                        }
+
+                                        if(isset($productoPorNombre) && !(is_null($productoPorNombre))){//Comprobar si existe el nombre del registro de excel si existe en BD
+                                            $productoNuevo->product_name = $producto['articulo'] . ' 2';//Si es diferente setear nuevo nombre en la BD agregando el numero 2 para que no este repetido en la BD
+                                        }
+                                        else{
+                                            $productoNuevo->product_name = $producto['articulo'];//Setear nuevo nombre en la BD
+                                        }
+
+                                        $productoNuevo->product_price = $producto['precio1'];//Setear nuevo precio
+                                        $productoNuevo->product_stock = $producto['tbodega'];//Setear nuevo stock
+                                        $productoNuevo->product_code = $producto['codigo'];//setear codigo al nuevo producto
+                                        $productoNuevo->id_user = intval($request->id_user);//setear id_user al nuevo producto
+
+                                        $id_no_definido_categoria = Category::where('category_descripcion', $_ENV['NO_DEFINIDO'])->first();
+                                        $id_no_definido_categoria = isset($id_no_definido_categoria) ? $id_no_definido_categoria : 1;
+                                        $productoNuevo->id_category = intval($id_no_definido_categoria);
+
+                                        $id_no_definido_prove = Provider::where('provider_name', $_ENV['NO_DEFINIDO'])->first();
+                                        $id_no_definido_prove = isset($id_no_definido_prove) ? $id_no_definido_prove : 1;
+                                        $productoNuevo->id_provider = intval($id_no_definido_prove);
+
+                                        $id_no_definido_marca = Brand::where('brand_name', $_ENV['NO_DEFINIDO'])->first();
+                                        $id_no_definido_marca = isset($id_no_definido_marca) ? $id_no_definido_marca : 1;
+                                        $productoNuevo->id_brand = intval($id_no_definido_marca);
+
+                                        $productoNuevo->product_status = $_ENV['STATUS_ON'];
+
+                                        if(!($productoNuevo->save())){
+                                            return response()->json([
+                                                'message' => 'Ocurrio un error interno en el servidor',
+                                                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                                            ]);
+                                        }
+                                    }
+                                }else{
+                                    return response()->json([
+                                        'message' => 'Error al intentar actualizar el stock del producto con codigo '.$producto['codigo'] . ' el precio no es un valor numerico o es negativo',
+                                        'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
+                                    ]);
+                                }
+                            }else{
+                                return response()->json([
+                                    'message' => 'Error al intentar actualizar el precio del producto con codigo '.$producto['codigo'] . ' el precio no es un valor numerico, es negativo o es igual a 0',
+                                    'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
+                                ]);
                             }
-
-                            if ($uni->description_product_unit == $_ENV['NO_DEFINIDO']) {
-                                $id_no_definido_unidad = $uni->id_product_unit;
-                                //break;
-                            }
-                        }
-
-                        if($existeUnidad){ //Comprobar si existe la unidad del registro de excel
-                            if(!($productoPorCodigo->id_product_unit == $idUnidad)){//Comprobar si dicha unidad es diferente a la registrada en la BD
-                                $productoPorCodigo->id_product_unit = intval($idUnidad);//Setear nuevo id de unidad en el producto registrado en la BD
-                            }
-                        }
-                        else{
-                            $productoPorCodigo->id_product_unit = intval($id_no_definido_unidad);// Setear dicho id de la unidad no definida en el producto registrado en BD
-                        }
-
-                        $productoPorNombre = Producto::where('product_name', $producto['articulo'])->first();//Obtener el producto correspondiente a ese nombre en BD
-
-                        if(isset($productoPorNombre) && !(is_null($productoPorNombre))){//Comprobar si existe el nombre del registro de excel si existe en BD
-                            if(!($productoPorNombre->product_code == $producto['codigo'])){//Comprobar si dicho id del codigo es diferente a la registrada en la BD
-                                $productoPorCodigo->product_name = $producto['articulo'];//Si es diferente setear nuevo nombre en la BD
-                            }
-                        }
-                        else{
-                            $productoPorCodigo->product_name = $producto['articulo'];//Setear nuevo nombre en la BD
-                        }
-
-                        if(is_numeric($producto['precio1']) && $producto['precio1'] >= 0){//Comprobar si el registro precio del excel es numerico y mayor o el igual a 0
-                            if(!($productoPorCodigo->product_price == ($producto['precio1']))){//Comprobar si se mantiene el mismo precio
-                                $productoPorCodigo->product_price = $producto['precio1'];//Setear nuevo precio
-                            }
-                        }
-                        else{
+                        }else{
                             return response()->json([
-                                'message' => 'Error al intentar actualizar el precio del producto con codigo '.$producto['codigo'] . ' el precio no es un valor numerico, es negativo o es igual a 0',
+                                'message' => 'Existe un articulo vacio con codigo '.$producto['codigo'],
                                 'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
                             ]);
                         }
-
-                        if(is_numeric($producto['tbodega']) && $producto['tbodega'] >=0){
-                            if(!($productoPorCodigo->product_stock == intval($producto['tbodega']))){//Comprobar si se mantiene el mismo stock
-                                $productoPorCodigo->product_stock = $producto['tbodega'];//Setear nuevo stock
-                            }
-                        }
-                        else{
-                            return response()->json([
-                                'message' => 'Error al intentar actualizar el stock del producto con codigo '.$producto['codigo'] . ' el precio no es un valor numerico o es negativo',
-                                'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
-                            ]);
-                        }
-
-                        $productoPorCodigo->id_user = intval($request->id_user);
-                        if(!$productoPorCodigo->save()){
-                            return response()->json([
-                                'message' => 'Ocurrio un error interno en el servidor',
-                                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
-                            ]);
-                        }
-
+                    }else{
+                        return response()->json([
+                            'message' => 'Existe una medida vacia con codigo '.$producto['codigo'],
+                            'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
+                        ]);
                     }
-                    else{
-                        $productoNuevo =  new Producto();
-
-                        $productoPorNombre = Producto::where('product_name', $producto['articulo'])->first();//Obtener el producto correspondiente a ese nombre en BD
-
-                        $existeUnidad= false; $idUnidad = 1; $id_no_definido_unidad = 1;
-                        foreach ($arregloUnidades as $uni) {
-                            if ($uni->description_product_unit == $producto['medida']) {
-                                $existeUnidad = true;
-                                $idUnidad = $uni->id_product_unit;
-                            }
-
-                            if ($uni->description_product_unit == $_ENV['NO_DEFINIDO']) {
-                                $id_no_definido_unidad = $uni->id_product_unit;
-                            }
-                        }
-
-                        if($existeUnidad){ //Comprobar si existe la unidad del registro de excel en la BD
-                            $productoNuevo->id_product_unit = intval($idUnidad);//Setear nuevo id de unidad en el producto nuevo en la BD
-                        }
-                        else{
-                            $productoNuevo->id_product_unit = intval($id_no_definido_unidad);// Setear dicho id de la unidad no definida en el producto registrado en BD
-                        }
-
-                        if(isset($productoPorNombre) && !(is_null($productoPorNombre))){//Comprobar si existe el nombre del registro de excel si existe en BD
-                            $productoNuevo->product_name = $producto['articulo'] . ' 2';//Si es diferente setear nuevo nombre en la BD agregando el numero 2 para que no este repetido en la BD
-                        }
-                        else{
-                            $productoNuevo->product_name = $producto['articulo'];//Setear nuevo nombre en la BD
-                        }
-
-                        if(is_numeric($producto['precio1']) && $producto['precio1'] >= 0){//Comprobar si el registro precio del excel es numerico y mayor o el igual a 0
-                            $productoNuevo->product_price = $producto['precio1'];//Setear nuevo precio
-                        }
-                        else{
-                            return response()->json([
-                                'message' => 'Error al intentar actualizar el precio del producto con codigo '.$producto['codigo'] . ' el precio no es un valor numerico, es negativo o es igual a 0',
-                                'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
-                            ]);
-                        }
-
-                        if(is_numeric($producto['tbodega']) && $producto['tbodega'] >=0){
-                            $productoNuevo->product_stock = $producto['tbodega'];//Setear nuevo stock
-                        }
-                        else{
-                            return response()->json([
-                                'message' => 'Error al intentar actualizar el stock del producto con codigo '.$producto['codigo'] . ' el precio no es un valor numerico o es negativo',
-                                'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
-                            ]);
-                        }
-
-                        $productoNuevo->product_code = $producto['codigo'];//setear codigo al nuevo producto
-                        $productoNuevo->id_user = intval($request->id_user);//setear id_user al nuevo producto
-
-                        $id_no_definido_categoria = Category::where('category_descripcion', $_ENV['NO_DEFINIDO'])->first();
-                        $id_no_definido_categoria = isset($id_no_definido_categoria) ? $id_no_definido_categoria : 1;
-                        $productoNuevo->id_category = intval($id_no_definido_categoria);
-
-                        $id_no_definido_prove = Provider::where('provider_name', $_ENV['NO_DEFINIDO'])->first();
-                        $id_no_definido_prove = isset($id_no_definido_prove) ? $id_no_definido_prove : 1;
-                        $productoNuevo->id_provider = intval($id_no_definido_prove);
-
-                        $id_no_definido_marca = Brand::where('brand_name', $_ENV['NO_DEFINIDO'])->first();
-                        $id_no_definido_marca = isset($id_no_definido_marca) ? $id_no_definido_marca : 1;
-                        $productoNuevo->id_brand = intval($id_no_definido_marca);
-
-                        $productoNuevo->product_status = $_ENV['STATUS_ON'];
-
-                        if(!($productoNuevo->save())){
-                            return response()->json([
-                                'message' => 'Ocurrio un error interno en el servidor',
-                                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
-                            ]);
-                        }
-                    }
-                }
-                else{
+                }else{
                     return response()->json([
                         'message' => 'Existe un codigo vacio, no numerico o es negativo',
                         'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']

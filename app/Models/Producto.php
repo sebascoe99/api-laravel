@@ -35,6 +35,11 @@ class Producto extends Model
     public function user(){
         return $this->belongsTo(User::class, 'id_user');
     }
+
+    public function productUnit(){
+        return $this->belongsTo(ProductoUnit::class, 'id_product_unit');
+    }
+
     use HasFactory;
     /*protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
                             'product_image', 'product_status', 'product_rating'];*/
