@@ -134,7 +134,7 @@ class ProviderController extends Controller
                 'provider_email' => 'required | email',
                 'provider_products_offered' => 'required',
                 'provider_phone' => 'required | max:15',
-                'provider_landline' => 'required | max:10',
+                'provider_landline' => 'required | max:15',
                 'provider_web_page' => 'required',
                 'provider_person_name' => 'required',
                 'provider_person_lastName' => 'required',
