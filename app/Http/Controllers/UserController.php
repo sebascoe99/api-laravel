@@ -187,6 +187,45 @@ class UserController extends Controller
         ]);
     }
 
+    public function changePassword(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'password' => 'required',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+        }
+
+        $user = User::findOrFail($request->id);
+        $user->password = Hash::make($request->password);
+        $user->password_encrypt = Crypt::encryptString($request->password);
+
+        if($user->save()){
+            return response()->json([
+                'message' => 'Contraseña actualizado exitosamente',
+                'status' => $_ENV['CODE_STATUS_OK'],
+            ]);
+        }
+        return response()->json([
+            'message' => 'Ocurrio un error interno en el servidor',
+            'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      *

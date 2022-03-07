@@ -84,6 +84,7 @@ Route::get('/users', [UserController::class, 'index']); //mostrar todos los usua
 Route::post('/users', [UserController::class, 'store']); //crear un usuario
 Route::put('/users/{id}', [UserController::class, 'update']); //actualizar un usuario
 Route::delete('/users/{id}', [UserController::class, 'destroy']); //eliminar un usuario
+Route::put('/users/password/{id}', [UserController::class, 'changePassword']); //actualizar un usuario
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes
