@@ -122,7 +122,6 @@ class ProviderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request){
-        //return $request;
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',

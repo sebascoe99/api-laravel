@@ -34,10 +34,20 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-
-
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof \Illuminate\Http\Exceptions\ThrottleRequestsException)
+        {
+            return response()->json([
+                'message' => 'Demasiados intentos, intentar en 1 minuto',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+        return parent::render($request, $e);
     }
 }

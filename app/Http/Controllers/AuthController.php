@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Crypt;
 class AuthController extends Controller
 {
     public function register(Request $request){
-
         try {
             $validator = Validator::make($request->all(), [
                 'id_role' => 'required',
@@ -42,7 +41,6 @@ class AuthController extends Controller
                     'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
                 ]);
         }
-
         $user = new User();
         $user->id_role = $request->id_role;
         $user->id_identification_type = $request->id_identification_type;
@@ -72,7 +70,6 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){
-        //return $request;
         if (!Auth::attempt($request->only('email', 'password') + ['user_status' => $_ENV['STATUS_ON']])){
             return response()->json([
                 'message' => 'Credenciales Invalidas',
@@ -98,10 +95,6 @@ class AuthController extends Controller
         ]);
     }
 
-    public function infouser(Request $request){
-        return $request->user();
-    }
-
     public function logout(Request $request){
         $user = User::where('id_user', $request->id)->firstOrFail();
         if($user->tokens()->delete()){
@@ -114,5 +107,9 @@ class AuthController extends Controller
             'message' => 'Debe iniciar sesión',
             'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
         ]);
+    }
+    
+    public function infouser(Request $request){
+        return $request->user();
     }
 }
