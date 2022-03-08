@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Audit;
-use App\Models\Producto;
-use App\Models\Promotion;
+use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class PromotionController extends Controller
+class BannerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,8 +19,7 @@ class PromotionController extends Controller
      */
     public function index()
     {
-        $promociones = Promotion::all()->where("promotion_status","=",$_ENV['STATUS_ON']);
-        return $promociones;
+
     }
 
     /**
@@ -44,9 +43,8 @@ class PromotionController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
-                'product_code' => 'required|numeric|min:0|not_in:0',
-                'discount' => 'required|numeric|min:0|not_in:0',
-                'date_expiry' => 'required',
+                'banner_name' => 'required',
+                'banner_status' => 'required|numeric|min:0',
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -64,31 +62,41 @@ class PromotionController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
         }
+        if($request->hasFile('image')){//Comprobar si existe la imagen y no tenga valor null
+            $extensionImagen = '.'.$request->file('image')->extension();
+            $nombreSinExtension = trim($request->category_thumbnail, $extensionImagen);
+            $nombreFinal = $nombreSinExtension.$extensionImagen;
+            $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
+            $url = Storage::url($imagen);//Guardar la imagen en el Storage
+        }else{
+            $url="";
+        }
 
         DB::enableQueryLog();
-        $promocion =  new Promotion();
-        $producto = Producto::where('product_code', $request->product_code)->first();
+        $banner =  new Banner();
+        $banner->banner_name = $request->banner_name;
 
-        $promocion->id_product = $producto->id_product;
-        $promocion->discount = $request->discount;
-        $promocion->date_expiry = $request->date_expiry;
-        $promocion->promotion_status = $_ENV['STATUS_ON'];
-        $promocion->save();
+        if($request->banner_description)
+            $banner->banner_description = $request->banner_description;
 
-        if(isset($promocion->id_promotion)){
+        $banner->banner_image = $url;
+        $banner->category_status = $request->banner_status;
+        $banner->save();
+
+        if(isset($banner->id_banner)){
             foreach (DB::getQueryLog() as $q) {
                 $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
             }
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_INSERCION'];
-            $audit->audit_description = 'Se agregó nueva promoción'.' con el producto ' . $producto->product_name;
-            $audit->audit_module = $_ENV['AUDIT_MODULE_PROMOTION'];
+            $audit->audit_description = 'Se agregó un nuevo banner'.' con nombre ' . $banner->banner_name;
+            $audit->audit_module = $_ENV['AUDIT_MODULE_BANNER'];
             $audit->audit_query = $queryStr;
             $audit->save();
 
             return response()->json([
-                'message' => 'Promocion creada con exito',
+                'message' => 'Banner creado con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
             ]);
         }else{
