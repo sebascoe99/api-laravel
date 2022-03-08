@@ -65,7 +65,7 @@ class BannerController extends Controller
         }
         if($request->hasFile('image')){//Comprobar si existe la imagen y no tenga valor null
             $extensionImagen = '.'.$request->file('image')->extension();
-            $nombreSinExtension = trim($request->category_thumbnail, $extensionImagen);
+            $nombreSinExtension = trim($request->banner_thumbnail, $extensionImagen);
             $nombreFinal = $nombreSinExtension.$extensionImagen;
             $imagen = $request->file('image')->storeAs('public/imagenes', $nombreFinal);//Obtener la ruta temporal de la imagen y cambiar el nombre y almacenar en 'public/imagenes'
             $url = Storage::url($imagen);//Guardar la imagen en el Storage
@@ -81,7 +81,7 @@ class BannerController extends Controller
             $banner->banner_description = $request->banner_description;
 
         $banner->banner_image = $url;
-        $banner->category_status = $request->banner_status;
+        $banner->banner_status = $request->banner_status;
         $banner->save();
 
         if(isset($banner->id_banner)){
