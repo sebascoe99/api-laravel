@@ -192,7 +192,7 @@ class CategoryController extends Controller
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
-            $audit->audit_description = 'Se actualizo la categoria'.' con nombre ' . $categoria->category_name;
+            $audit->audit_description = 'Se actualizó la categoria'.' con nombre ' . $categoria->category_name;
             $audit->audit_module = $_ENV['AUDIT_MODULE_CATEGORY'];
             $audit->audit_query = $queryStr;
             $audit->save();
@@ -263,7 +263,7 @@ class CategoryController extends Controller
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_ELIMINACION'];
-            $audit->audit_description = 'Se elimino la categoria'.' con nombre ' . $categoria->category_name;
+            $audit->audit_description = 'Se eliminó la categoria'.' con nombre ' . $categoria->category_name;
             $audit->audit_module = $_ENV['AUDIT_MODULE_CATEGORY'];
             $audit->audit_query = $queryStr;
             $audit->save();

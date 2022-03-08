@@ -185,7 +185,7 @@ class ProviderController extends Controller
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
-            $audit->audit_description = 'Se actualizo el proveedor'.' con nombre ' . $proveedor->provider_name;
+            $audit->audit_description = 'Se actualizó el proveedor'.' con nombre ' . $proveedor->provider_name;
             $audit->audit_module = $_ENV['AUDIT_MODULE_PROVIDER'];
             $audit->audit_query = $queryStr;
             $audit->save();
@@ -241,7 +241,7 @@ class ProviderController extends Controller
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_ELIMINACION'];
-            $audit->audit_description = 'Se elimino el proveedor'.' con nombre ' . $proveedor->provider_name;
+            $audit->audit_description = 'Se eliminó el proveedor'.' con nombre ' . $proveedor->provider_name;
             $audit->audit_module = $_ENV['AUDIT_MODULE_PROVIDER'];
             $audit->audit_query = $queryStr;
             $audit->save();

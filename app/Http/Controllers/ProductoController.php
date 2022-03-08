@@ -30,12 +30,8 @@ class ProductoController extends Controller
 
     public function index()
     {
-         //$productos = Producto::all()->where("product_status","=",$_ENV['PRODUCT_STATUS_ON']);
-         //$productos = Producto::orderBy('create_date', 'desc')->get();
-         $productos = Producto::with('brand', 'category')->orderBy('create_date', 'desc')->get();
-         return $productos;
-         //return $queryStr, $productos;
-        //->where("product_status","=",$_ENV['PRODUCT_STATUS_ON']);
+        $productos = Producto::with('brand', 'category')->orderBy('create_date', 'desc')->get();
+        return $productos;
     }
 
     /**
@@ -122,7 +118,7 @@ class ProductoController extends Controller
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_INSERCION'];
-            $audit->audit_description = 'Se agregó nuevo producto'.' con codigo ' . $producto->product_code;
+            $audit->audit_description = 'Se agregó nuevo producto'.' con código ' . $producto->product_code;
             $audit->audit_module = $_ENV['AUDIT_MODULE_PRODUCT'];
             $audit->audit_query = $queryStr;
             $audit->save();
@@ -240,7 +236,7 @@ class ProductoController extends Controller
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
-            $audit->audit_description = 'Se actualizo el producto'.' con codigo ' . $producto->product_code;
+            $audit->audit_description = 'Se actualizó el producto'.' con código ' . $producto->product_code;
             $audit->audit_module = $_ENV['AUDIT_MODULE_PRODUCT'];
             $audit->audit_query = $queryStr;
             $audit->save();
@@ -311,7 +307,7 @@ class ProductoController extends Controller
             $audit =  new Audit();
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_ELIMINACION'];
-            $audit->audit_description = 'Se elimino el producto'.' con codigo ' . $producto->product_code;
+            $audit->audit_description = 'Se eliminó el producto'.' con código ' . $producto->product_code;
             $audit->audit_module = $_ENV['AUDIT_MODULE_PRODUCT'];
             $audit->audit_query = $queryStr;
             $audit->save();
@@ -562,7 +558,5 @@ class ProductoController extends Controller
             ]);
         }
     }
-
-
 
 }
