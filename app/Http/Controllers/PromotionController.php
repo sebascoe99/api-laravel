@@ -128,9 +128,64 @@ class PromotionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0',
+                'product_code' => 'required|numeric|min:0|not_in:0',
+                'discount' => 'required|numeric|min:0|not_in:0',
+                'date_expiry' => 'required',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        DB::enableQueryLog();
+        $promocion = Promotion::where('id_promotion', $request->id)->first();
+        $producto = Producto::where('product_code', $request->product_code)->first();
+
+        $promocion->id_product = $producto->id_product;
+        $promocion->discount = $request->discount;
+        $promocion->date_expiry = $request->date_expiry;
+        $promocion->promotion_status = $_ENV['STATUS_ON'];
+        $promocion->save();
+
+        if(isset($promocion->id_promotion)){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
+            $audit->audit_description = 'Se actualizó la promoción'.' con el producto ' . $producto->product_name;
+            $audit->audit_module = $_ENV['AUDIT_MODULE_PROMOTION'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
+            return response()->json([
+                'message' => 'Promoción actualizada con exito',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
     }
 
     /**
@@ -139,8 +194,55 @@ class PromotionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        DB::enableQueryLog();
+        $promocion = Promotion::findOrFail($request->id);
+        $producto = Producto::where('id_product', $promocion->id_product)->first();
+
+        $promocion->promotion_status = $_ENV['STATUS_OFF'];
+        if($promocion->save()){
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ELIMINACION'];
+            $audit->audit_description = 'Se eliminó la promoción'.' con el producto ' . $producto->product_name;
+            $audit->audit_module = $_ENV['AUDIT_MODULE_PROMOTION'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
+            return response()->json([
+                'message' => 'Eliminado correctamente',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
     }
 }
