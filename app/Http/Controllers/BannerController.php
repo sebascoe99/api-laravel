@@ -19,7 +19,8 @@ class BannerController extends Controller
      */
     public function index()
     {
-
+        $banners = Banner::all()->where("banner_status","=",$_ENV['STATUS_ON']);
+        return $banners;
     }
 
     /**
