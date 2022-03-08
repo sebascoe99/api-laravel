@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentificationTypeController;
 use App\Http\Controllers\ProductoUnitController;
+use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\TypeProviderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ValidateFieldsController;
@@ -85,6 +86,12 @@ Route::post('/users', [UserController::class, 'store']); //crear un usuario
 Route::put('/users/{id}', [UserController::class, 'update']); //actualizar un usuario
 Route::delete('/users/{id}', [UserController::class, 'destroy']); //eliminar un usuario
 Route::put('/users/password/{id}', [UserController::class, 'changePassword']); //actualizar un usuario
+
+// Rutas para el controlador UserController
+Route::get('/promotions', [PromotionController::class, 'index']); //mostrar todas las promociones
+Route::post('/promotions', [PromotionController::class, 'store']); //crear una promocion
+Route::put('/promotions/{id}', [PromotionController::class, 'update']); //actualizar una promoción
+Route::delete('/promotions/{id}', [PromotionController::class, 'destroy']); //eliminar un promoción
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes
