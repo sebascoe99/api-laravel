@@ -81,7 +81,7 @@ class BannerController extends Controller
         if(isset($request->banner_description))
             $banner->banner_description = $request->banner_description;
 
-        $banner->banner_image = $url;
+        $banner->banner_thumbnail = $url;
         $banner->banner_status = $request->banner_status;
         $banner->save();
 
@@ -187,7 +187,7 @@ class BannerController extends Controller
         if(isset($request->banner_description))
             $banner->banner_description = $request->banner_description;
 
-        $banner->banner_image = $url;
+        $banner->banner_thumbnail = $url;
         $banner->banner_status = $request->banner_status;
         $banner->save();
 
@@ -204,7 +204,7 @@ class BannerController extends Controller
             $audit->save();
 
             return response()->json([
-                'message' => 'Banner creado con exito',
+                'message' => 'Banner actualizado con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
             ]);
         }else{
