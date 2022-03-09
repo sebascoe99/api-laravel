@@ -44,7 +44,7 @@ class PromotionController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
-                'promotion_product' => 'required|numeric|min:0',
+                'id_product' => 'required|numeric|min:0|not_in:0',
                 'promotion_discount' => 'required|numeric|min:0|not_in:0',
                 'promotion_date_of_expiry' => 'required',
                 'promotion_status' => 'required|numeric|min:0'
@@ -68,7 +68,7 @@ class PromotionController extends Controller
 
         DB::enableQueryLog();
         $promocion =  new Promotion();
-        $producto = Producto::where('product_code', $request->promotion_product)->first();
+        $producto = Producto::where('id_product', $request->id_product)->first();
 
         if(isset($request->promotion_description))
             $promocion->promotion_description  = $request->promotion_description;
@@ -137,7 +137,7 @@ class PromotionController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
-                'promotion_product' => 'required|numeric|min:0',
+                'id_product' => 'required|numeric|min:0',
                 'promotion_discount' => 'required|numeric|min:0|not_in:0',
                 'promotion_date_of_expiry ' => 'required',
                 'promotion_status' => 'required|numeric|min:0'
@@ -161,7 +161,7 @@ class PromotionController extends Controller
 
         DB::enableQueryLog();
         $promocion = Promotion::where('id_promotion', $request->id)->first();
-        $producto = Producto::where('product_code', $request->promotion_product)->first();
+        $producto = Producto::where('id_product', $request->id_product)->first();
 
         if(isset($request->promotion_description))
             $promocion->promotion_description = $request->promotion_description;
