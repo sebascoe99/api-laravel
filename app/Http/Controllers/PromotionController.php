@@ -139,7 +139,7 @@ class PromotionController extends Controller
                 'id_user' => 'required|numeric|min:0|not_in:0',
                 'id_product' => 'required|numeric|min:0',
                 'promotion_discount' => 'required|numeric|min:0|not_in:0',
-                'promotion_date_of_expiry ' => 'required',
+                'promotion_date_of_expiry' => 'required',
                 'promotion_status' => 'required|numeric|min:0'
             ],
             [

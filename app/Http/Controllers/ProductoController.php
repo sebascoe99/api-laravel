@@ -9,13 +9,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductosImport;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Inventary;
 use App\Models\ProductoUnit;
 use App\Models\Provider;
-use Maatwebsite\Excel\HeadingRowImport;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 use function PHPUnit\Framework\isNull;
@@ -112,7 +111,13 @@ class ProductoController extends Controller
         $producto->save();
 
         if(isset($producto->id_product)){
-            
+
+            /*$inventario = new Inventary();
+            $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
+            $inventario->inventory_stock_amount = $producto->product_stock;
+            $inventario->inventory_voucher_type = $producto->product_stock;
+            $inventario->inventory_voucher_type = "";
+            $inventario->save();*/
 
             foreach (DB::getQueryLog() as $q) {
                 $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
