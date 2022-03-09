@@ -116,6 +116,7 @@ class ProductoController extends Controller
             $inventario->id_product = $producto->id_product;
             $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
             $inventario->inventory_stock_amount = $producto->product_stock;
+            $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_INGRESO_P'];
             $inventario->save();
 
             foreach (DB::getQueryLog() as $q) {
@@ -235,13 +236,13 @@ class ProductoController extends Controller
         $producto->product_image = $url;
         $producto->product_status = intval($request->product_status);
         $producto->product_rating = intval($request->product_rating);
-
         if($producto->save()){
             if($producto->product_stock > $stock_antiguo){
                 $inventario = new Inventary();
                 $inventario->id_product = $producto->id_product;
                 $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
                 $inventario->inventory_stock_amount = ($producto->product_stock - $stock_antiguo);
+                $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_INGRESO_P'];
                 $inventario->save();
             }
             else if($producto->product_stock < $stock_antiguo){
@@ -249,6 +250,7 @@ class ProductoController extends Controller
                 $inventario->id_product = $producto->id_product;
                 $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_EGRESO'];
                 $inventario->inventory_stock_amount = ($stock_antiguo - $producto->product_stock);
+                $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_EGRESO_VENTA_F'];
                 $inventario->save();
             }
 
@@ -478,6 +480,7 @@ class ProductoController extends Controller
                                                         $inventario->id_product = $productoPorCodigo->id_product;
                                                         $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
                                                         $inventario->inventory_stock_amount = ($productoPorCodigo->product_stock - $stock_antiguo);
+                                                        $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_INGRESO_P'];
                                                         $inventario->save();
                                                     }
                                                     else if($productoPorCodigo->product_stock < $stock_antiguo){
@@ -485,6 +488,7 @@ class ProductoController extends Controller
                                                         $inventario->id_product = $productoPorCodigo->id_product;
                                                         $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_EGRESO'];
                                                         $inventario->inventory_stock_amount = ($stock_antiguo - $productoPorCodigo->product_stock);
+                                                        $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_EGRESO_VENTA_F'];
                                                         $inventario->save();
                                                     }
 
@@ -551,6 +555,7 @@ class ProductoController extends Controller
                                             $inventario->id_product = $productoNuevo->id_product;
                                             $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
                                             $inventario->inventory_stock_amount = $productoNuevo->product_stock;
+                                            $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_INGRESO_P'];
                                             $inventario->save();
 
                                             return response()->json([
