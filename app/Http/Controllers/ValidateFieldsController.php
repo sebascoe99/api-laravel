@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Promotion;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -210,6 +211,50 @@ class ValidateFieldsController extends Controller
             return response()->json([
                 'message' => 'Ocurrio un error interno en el servidor',
                 'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+
+    }
+
+    /**
+     * Validate field id_product from table promotion.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function validateProductInPromotion(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_product' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+
+        $producto_promocion = Promotion::where('id_product', $request->id_product)->first();
+
+        if(isset($producto_promocion)){
+            return response()->json([
+                'message' => "Tiene promocion",
+                'status' => $_ENV['CODE_STATUS_OK'],
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'No tiene promocion',
+                'status' => $_ENV['CODE_STATUS_OK']
             ]);
         }
 

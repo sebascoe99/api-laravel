@@ -107,6 +107,7 @@ Route::post('/validate/product/name', [ValidateFieldsController::class, 'validat
 Route::post('/validate/user/email', [ValidateFieldsController::class, 'validateUserEmail']);
 Route::post('/validate/user/identification', [ValidateFieldsController::class, 'validateUserIdentification']);
 Route::post('/validate/user/password', [ValidateFieldsController::class, 'validateUserPassword']);
+Route::post('/validate/promotion/product', [ValidateFieldsController::class, 'validateProductInPromotion']);
 
 
 

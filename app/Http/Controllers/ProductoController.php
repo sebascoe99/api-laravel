@@ -112,6 +112,8 @@ class ProductoController extends Controller
         $producto->save();
 
         if(isset($producto->id_product)){
+            
+
             foreach (DB::getQueryLog() as $q) {
                 $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
             }
