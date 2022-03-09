@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentificationTypeController;
+use App\Http\Controllers\InventaryController;
 use App\Http\Controllers\ProductoUnitController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\TypeProviderController;
@@ -98,6 +99,12 @@ Route::get('/banners', [BannerController::class, 'index']); //mostrar todas las 
 Route::post('/banners', [BannerController::class, 'store']); //crear una promocion
 Route::put('/banners/{id}', [BannerController::class, 'update']); //actualizar una promoción
 Route::delete('/banners/{id}', [BannerController::class, 'destroy']); //eliminar un promoción
+
+// Rutas para el controlador InventaryController
+Route::get('/inventories', [InventaryController::class, 'index']); //mostrar todas las promociones
+Route::post('/inventories', [InventaryController::class, 'store']); //crear una promocion
+Route::put('/inventories/{id}', [InventaryController::class, 'update']); //actualizar una promoción
+Route::delete('/inventories/{id}', [InventaryController ::class, 'destroy']); //eliminar un promoción
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes

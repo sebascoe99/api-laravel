@@ -112,12 +112,11 @@ class ProductoController extends Controller
 
         if(isset($producto->id_product)){
 
-            /*$inventario = new Inventary();
+            $inventario = new Inventary();
+            $inventario->id_product = $producto->id_product;
             $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
             $inventario->inventory_stock_amount = $producto->product_stock;
-            $inventario->inventory_voucher_type = $producto->product_stock;
-            $inventario->inventory_voucher_type = "";
-            $inventario->save();*/
+            $inventario->save();
 
             foreach (DB::getQueryLog() as $q) {
                 $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
@@ -228,6 +227,7 @@ class ProductoController extends Controller
         $producto->id_category = intval($request->id_category);
         $producto->id_product_unit = intval($request->id_product_unit);
         $producto->product_name = $request->product_name;
+        $stock_antiguo = intval($producto->product_stock);
         $producto->product_stock = intval($request->product_stock);
         $producto->product_code = $request->product_code;
         $producto->product_description = $request->product_description;
@@ -237,6 +237,21 @@ class ProductoController extends Controller
         $producto->product_rating = intval($request->product_rating);
 
         if($producto->save()){
+            if($producto->product_stock > $stock_antiguo){
+                $inventario = new Inventary();
+                $inventario->id_product = $producto->id_product;
+                $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
+                $inventario->inventory_stock_amount = ($producto->product_stock - $stock_antiguo);
+                $inventario->save();
+            }
+            else if($producto->product_stock < $stock_antiguo){
+                $inventario = new Inventary();
+                $inventario->id_product = $producto->id_product;
+                $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_EGRESO'];
+                $inventario->inventory_stock_amount = ($stock_antiguo - $producto->product_stock);
+                $inventario->save();
+            }
+
             foreach (DB::getQueryLog() as $q) {
                 $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
             }
@@ -450,12 +465,29 @@ class ProductoController extends Controller
                                                     $productoPorCodigo->product_price = $producto['precio1'];//Setear nuevo precio
                                                 }
 
+                                                $stock_antiguo = intval($productoPorCodigo->product_stock);
                                                 if(!($productoPorCodigo->product_stock == intval($producto['tbodega']))){//Comprobar si se mantiene el mismo stock
-                                                    $productoPorCodigo->product_stock = $producto['tbodega'];//Setear nuevo stock
+                                                    $productoPorCodigo->product_stock = intval($producto['tbodega']);//Setear nuevo stock
                                                 }
 
                                                 $productoPorCodigo->id_user = intval($request->id_user);
                                                 if(!$productoPorCodigo->save()){
+
+                                                    if($productoPorCodigo->product_stock > $stock_antiguo){
+                                                        $inventario = new Inventary();
+                                                        $inventario->id_product = $productoPorCodigo->id_product;
+                                                        $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
+                                                        $inventario->inventory_stock_amount = ($productoPorCodigo->product_stock - $stock_antiguo);
+                                                        $inventario->save();
+                                                    }
+                                                    else if($productoPorCodigo->product_stock < $stock_antiguo){
+                                                        $inventario = new Inventary();
+                                                        $inventario->id_product = $productoPorCodigo->id_product;
+                                                        $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_EGRESO'];
+                                                        $inventario->inventory_stock_amount = ($stock_antiguo - $productoPorCodigo->product_stock);
+                                                        $inventario->save();
+                                                    }
+
                                                     return response()->json([
                                                         'message' => 'Ocurrio un error interno en el servidor',
                                                         'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
@@ -515,6 +547,12 @@ class ProductoController extends Controller
                                         $productoNuevo->product_status = $_ENV['STATUS_ON'];
 
                                         if(!($productoNuevo->save())){
+                                            $inventario = new Inventary();
+                                            $inventario->id_product = $productoNuevo->id_product;
+                                            $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
+                                            $inventario->inventory_stock_amount = $productoNuevo->product_stock;
+                                            $inventario->save();
+
                                             return response()->json([
                                                 'message' => 'Ocurrio un error interno en el servidor',
                                                 'status' => $_ENV['CODE_STATUS_SERVER_ERROR']

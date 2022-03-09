@@ -244,12 +244,12 @@ class ValidateFieldsController extends Controller
             ]);
         }
 
-        $producto_promocion = Promotion::where('id_product', $request->id_product)->first();
+        $producto_promocion = Promotion::where('id_product', $request->id_product)->where('promotion_status', $_ENV['STATUS_ON'])->first();
 
         if(isset($producto_promocion)){
             return response()->json([
                 'message' => "Tiene promocion",
-                'status' => $_ENV['CODE_STATUS_OK'],
+                'status' => $_ENV['CODE_STATUS_OK']
             ]);
         }else{
             return response()->json([
