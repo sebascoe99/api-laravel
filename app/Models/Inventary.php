@@ -17,5 +17,9 @@ class Inventary extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s'
     ];
 
+    public function producto(){
+        return $this->belongsTo(Producto::class, 'id_product');
+    }
+
     use HasFactory;
 }

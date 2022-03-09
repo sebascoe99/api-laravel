@@ -44,6 +44,10 @@ class Producto extends Model
         return $this->hasOne(Promotion::class, 'id_product');
     }
 
+    public function inventary(){
+        return $this->hasOne(Inventary::class, 'id_product');
+    }
+
     use HasFactory;
     /*protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
                             'product_image', 'product_status', 'product_rating'];*/

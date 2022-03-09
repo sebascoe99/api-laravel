@@ -14,7 +14,7 @@ class InventaryController extends Controller
      */
     public function index()
     {
-        $inventario = Inventary::orderBy('create_date', 'desc')->get();
+        $inventario = Inventary::with('producto')->orderBy('create_date', 'desc')->get();
         return $inventario;
     }
 
