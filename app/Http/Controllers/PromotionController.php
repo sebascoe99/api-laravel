@@ -19,7 +19,7 @@ class PromotionController extends Controller
      */
     public function index()
     {
-        $promociones = Promotion::all()->where("promotion_status","=",$_ENV['STATUS_ON']);
+        $promociones = Promotion::orderBy('create_date', 'desc')->get();
         return $promociones;
     }
 
@@ -44,9 +44,10 @@ class PromotionController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
-                'product_code' => 'required|numeric|min:0|not_in:0',
-                'discount' => 'required|numeric|min:0|not_in:0',
-                'date_expiry' => 'required',
+                'promotion_product' => 'required|numeric|min:0',
+                'promotion_discount' => 'required|numeric|min:0|not_in:0',
+                'promotion_date_of_expiry ' => 'required',
+                'promotion_status' => 'required|numeric|min:0'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -67,15 +68,15 @@ class PromotionController extends Controller
 
         DB::enableQueryLog();
         $promocion =  new Promotion();
-        $producto = Producto::where('product_code', $request->product_code)->first();
+        $producto = Producto::where('product_code', $request->promotion_product)->first();
 
         if(isset($request->promotion_description))
-            $promocion->promotion_description = $request->promotion_description;
+            $promocion->promotion_description  = $request->promotion_description;
 
         $promocion->id_product = $producto->id_product;
-        $promocion->discount = $request->discount;
-        $promocion->date_expiry = $request->date_expiry;
-        $promocion->promotion_status = $_ENV['STATUS_ON'];
+        $promocion->promotion_discount = $request->promotion_discount;
+        $promocion->promotion_date_of_expiry = $request->promotion_date_of_expiry;
+        $promocion->promotion_status = $request->promotion_status;
         $promocion->save();
 
         if(isset($promocion->id_promotion)){
@@ -136,9 +137,10 @@ class PromotionController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
-                'product_code' => 'required|numeric|min:0|not_in:0',
-                'discount' => 'required|numeric|min:0|not_in:0',
-                'date_expiry' => 'required',
+                'promotion_product' => 'required|numeric|min:0',
+                'promotion_discount' => 'required|numeric|min:0|not_in:0',
+                'promotion_date_of_expiry ' => 'required',
+                'promotion_status' => 'required|numeric|min:0'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -159,15 +161,15 @@ class PromotionController extends Controller
 
         DB::enableQueryLog();
         $promocion = Promotion::where('id_promotion', $request->id)->first();
-        $producto = Producto::where('product_code', $request->product_code)->first();
+        $producto = Producto::where('product_code', $request->promotion_product)->first();
 
         if(isset($request->promotion_description))
             $promocion->promotion_description = $request->promotion_description;
 
         $promocion->id_product = $producto->id_product;
-        $promocion->discount = $request->discount;
-        $promocion->date_expiry = $request->date_expiry;
-        $promocion->promotion_status = $_ENV['STATUS_ON'];
+        $promocion->promotion_discount = $request->promotion_discount;
+        $promocion->promotion_date_of_expiry  = $request->promotion_date_of_expiry ;
+        $promocion->promotion_status  = $request->promotion_status;
         $promocion->save();
 
         if(isset($promocion->id_promotion)){

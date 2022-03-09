@@ -19,7 +19,7 @@ class BannerController extends Controller
      */
     public function index()
     {
-        $banners = Banner::all()->where("banner_status","=",$_ENV['STATUS_ON']);
+        $banners = Banner::orderBy('create_date', 'desc')->get();
         return $banners;
     }
 
@@ -140,6 +140,7 @@ class BannerController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //return $request->all();
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
@@ -163,8 +164,9 @@ class BannerController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
         }
-
+        DB::enableQueryLog();
         $banner = Banner::findOrFail($request->id);//Se obtiene el objeto banner por el id
+
         if($request->hasFile('image')){//Comprobar si existe la imagen
             $url = $this->agregarImagen($request, $banner);
         }else{
@@ -180,8 +182,6 @@ class BannerController extends Controller
             }
         }
 
-        DB::enableQueryLog();
-        $banner =  new Banner();
         $banner->banner_name = $request->banner_name;
 
         if(isset($request->banner_description))
