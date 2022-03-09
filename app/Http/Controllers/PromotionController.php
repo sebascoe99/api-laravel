@@ -69,6 +69,9 @@ class PromotionController extends Controller
         $promocion =  new Promotion();
         $producto = Producto::where('product_code', $request->product_code)->first();
 
+        if(isset($request->promotion_description))
+            $promocion->promotion_description = $request->promotion_description;
+
         $promocion->id_product = $producto->id_product;
         $promocion->discount = $request->discount;
         $promocion->date_expiry = $request->date_expiry;
@@ -157,6 +160,9 @@ class PromotionController extends Controller
         DB::enableQueryLog();
         $promocion = Promotion::where('id_promotion', $request->id)->first();
         $producto = Producto::where('product_code', $request->product_code)->first();
+
+        if(isset($request->promotion_description))
+            $promocion->promotion_description = $request->promotion_description;
 
         $promocion->id_product = $producto->id_product;
         $promocion->discount = $request->discount;

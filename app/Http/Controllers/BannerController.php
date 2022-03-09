@@ -78,7 +78,7 @@ class BannerController extends Controller
         $banner =  new Banner();
         $banner->banner_name = $request->banner_name;
 
-        if($request->banner_description)
+        if(isset($request->banner_description))
             $banner->banner_description = $request->banner_description;
 
         $banner->banner_image = $url;
@@ -184,7 +184,7 @@ class BannerController extends Controller
         $banner =  new Banner();
         $banner->banner_name = $request->banner_name;
 
-        if($request->banner_description)
+        if(isset($request->banner_description))
             $banner->banner_description = $request->banner_description;
 
         $banner->banner_image = $url;
