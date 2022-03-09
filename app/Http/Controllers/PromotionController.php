@@ -19,7 +19,7 @@ class PromotionController extends Controller
      */
     public function index()
     {
-        $promociones = Promotion::orderBy('create_date', 'desc')->get();
+        $promociones = Promotion::with('producto')->orderBy('create_date', 'desc')->get();
         return $promociones;
     }
 

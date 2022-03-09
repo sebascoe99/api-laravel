@@ -18,5 +18,9 @@ class Promotion extends Model
         'date_expiry' => 'datetime:Y-m-d',
     ];
 
+    public function producto(){
+        return $this->belongsTo(Producto::class, 'id_product');
+    }
+
     use HasFactory;
 }

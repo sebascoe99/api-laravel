@@ -40,6 +40,10 @@ class Producto extends Model
         return $this->belongsTo(ProductoUnit::class, 'id_product_unit');
     }
 
+    public function promotion(){
+        return $this->hasOne(Promotion::class, 'id_product');
+    }
+
     use HasFactory;
     /*protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
                             'product_image', 'product_status', 'product_rating'];*/
