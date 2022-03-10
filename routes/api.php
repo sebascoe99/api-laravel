@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentificationTypeController;
+use App\Http\Controllers\InventaryEController;
 use App\Http\Controllers\InventaryIController;
 use App\Http\Controllers\ProductoUnitController;
 use App\Http\Controllers\PromotionController;
@@ -100,11 +101,17 @@ Route::post('/banners', [BannerController::class, 'store']); //crear una promoci
 Route::put('/banners/{id}', [BannerController::class, 'update']); //actualizar una promoción
 Route::delete('/banners/{id}', [BannerController::class, 'destroy']); //eliminar un promoción
 
-// Rutas para el controlador InventaryController
+// Rutas para el controlador InventaryIController
 Route::get('/inventories/ingreso', [InventaryIController::class, 'index']); //mostrar todas las promociones
 Route::post('/inventories/ingreso', [InventaryIController::class, 'store']); //crear una promocion
 Route::put('/inventories/ingreso/{id}', [InventaryIController::class, 'update']); //actualizar una promoción
 Route::delete('/inventories/ingreso/{id}', [InventaryIController ::class, 'destroy']); //eliminar un promoción
+
+// Rutas para el controlador InventaryEController
+Route::get('/inventories/egreso', [InventaryEController::class, 'index']); //mostrar todas las promociones
+Route::post('/inventories/egreso', [InventaryEController::class, 'store']); //crear una promocion
+Route::put('/inventories/egreso/{id}', [InventaryEController::class, 'update']); //actualizar una promoción
+Route::delete('/inventories/egreso/{id}', [InventaryEController ::class, 'destroy']); //eliminar un promoción
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes
