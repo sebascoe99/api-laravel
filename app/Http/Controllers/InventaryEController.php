@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InventaryE;
 use Illuminate\Http\Request;
 
 class InventaryEController extends Controller
@@ -13,7 +14,8 @@ class InventaryEController extends Controller
      */
     public function index()
     {
-        //
+        $inventarioE = InventaryE::with('order')->orderBy('create_date', 'desc')->get();
+        return $inventarioE;
     }
 
     /**
