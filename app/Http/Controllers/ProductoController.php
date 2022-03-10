@@ -28,7 +28,7 @@ class ProductoController extends Controller
 
     public function index()
     {
-        $productos = Producto::with('brand', 'category')->orderBy('create_date', 'desc')->get();
+        $productos = Producto::with('category', 'provider', 'brand', 'productUnit')->orderBy('create_date', 'desc')->get();
         return $productos;
     }
 
