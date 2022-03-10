@@ -42,7 +42,7 @@ class InventaryEController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
         }
-        $orden = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.typePay')->where('id_order', '=',  $request->id_order)->get();
+        $orden = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')->where('id_order', '=',  $request->id_order)->get();
         return $orden;
     }
 

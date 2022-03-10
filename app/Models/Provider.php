@@ -20,6 +20,10 @@ class Provider extends Model
 
     use HasFactory;
 
+    public function producto(){
+        return $this->hasOne(Producto::class, 'id_product');
+    }
+
     public function type_provider(){
         return $this->hasOne(TypeProvider::class, 'id_type_provider');
     }

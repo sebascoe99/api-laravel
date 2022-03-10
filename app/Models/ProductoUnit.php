@@ -22,5 +22,4 @@ class ProductoUnit extends Model
     public function producto(){
         return $this->hasOne(Producto::class, 'id_product_unit');
     }
-    
 }
