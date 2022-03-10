@@ -48,6 +48,10 @@ class Producto extends Model
         return $this->hasOne(InventaryI::class, 'id_product');
     }
 
+    public function orderDetail(){
+        return $this->hasOne(OrderDetail::class, 'id_product');
+    }
+
     use HasFactory;
     /*protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
                             'product_image', 'product_status', 'product_rating'];*/

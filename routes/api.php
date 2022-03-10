@@ -102,16 +102,11 @@ Route::put('/banners/{id}', [BannerController::class, 'update']); //actualizar u
 Route::delete('/banners/{id}', [BannerController::class, 'destroy']); //eliminar un promoción
 
 // Rutas para el controlador InventaryIController
-Route::get('/inventories/ingreso', [InventaryIController::class, 'index']); //mostrar todas las promociones
-Route::post('/inventories/ingreso', [InventaryIController::class, 'store']); //crear una promocion
-Route::put('/inventories/ingreso/{id}', [InventaryIController::class, 'update']); //actualizar una promoción
-Route::delete('/inventories/ingreso/{id}', [InventaryIController ::class, 'destroy']); //eliminar un promoción
+Route::get('/inventories/ingreso', [InventaryIController::class, 'index']); //mostrar todas los ingresos
 
 // Rutas para el controlador InventaryEController
-Route::get('/inventories/egreso', [InventaryEController::class, 'index']); //mostrar todas las promociones
-Route::post('/inventories/egreso', [InventaryEController::class, 'store']); //crear una promocion
-Route::put('/inventories/egreso/{id}', [InventaryEController::class, 'update']); //actualizar una promoción
-Route::delete('/inventories/egreso/{id}', [InventaryEController ::class, 'destroy']); //eliminar un promoción
+Route::get('/inventories/egreso', [InventaryEController::class, 'index']); //mostrar todas los egresos
+Route::post('/inventories/egreso/getOrder', [InventaryEController::class, 'getOrderDetail']); //Obetener el detalle total de una orden
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes

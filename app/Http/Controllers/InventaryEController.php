@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\InventaryE;
+use App\Models\OrderOrderDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class InventaryEController extends Controller
 {
@@ -14,8 +16,34 @@ class InventaryEController extends Controller
      */
     public function index()
     {
-        $inventarioE = InventaryE::with('order')->orderBy('create_date', 'desc')->get();
+        $inventarioE = InventaryE::with('order', 'order.orderStatus')->orderBy('create_date', 'desc')->get();
         return $inventarioE;
+    }
+
+    public function getOrderDetail(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_order' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+        $orden = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.typePay')->where('id_order', '=',  $request->id_order)->get();
+        return $orden;
     }
 
     /**

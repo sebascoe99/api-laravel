@@ -21,5 +21,17 @@ class Order extends Model
         return $this->hasOne(InventaryE::class, 'id_order');
     }
 
+    public function orderStatus(){
+        return $this->belongsTo(OrderStatus::class, 'id_order_status');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function orderOrderDatail(){
+        return $this->hasOne(OrderOrderDetail::class, 'id_order');
+    }
+
     use HasFactory;
 }

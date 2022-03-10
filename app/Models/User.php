@@ -67,4 +67,8 @@ class User extends Authenticatable
     public function audit(){
         return $this->hasOne(Audit::class, 'id_audit');
     }
+
+    public function order(){
+        return $this->hasOne(Order::class, 'id_order');
+    }
 }
