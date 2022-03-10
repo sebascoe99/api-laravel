@@ -9,10 +9,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use App\Imports\ProductosImport;
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Inventary;
+use App\Models\InventaryI;
 use App\Models\ProductoUnit;
 use App\Models\Provider;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -112,7 +111,7 @@ class ProductoController extends Controller
 
         if(isset($producto->id_product)){
 
-            $inventario = new Inventary();
+            $inventario = new InventaryI();
             $inventario->id_product = $producto->id_product;
             $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
             $inventario->inventory_stock_amount = $producto->product_stock;
@@ -238,19 +237,11 @@ class ProductoController extends Controller
         $producto->product_rating = intval($request->product_rating);
         if($producto->save()){
             if($producto->product_stock > $stock_antiguo){
-                $inventario = new Inventary();
+                $inventario = new InventaryI();
                 $inventario->id_product = $producto->id_product;
                 $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
                 $inventario->inventory_stock_amount = ($producto->product_stock - $stock_antiguo);
                 $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_INGRESO_P'];
-                $inventario->save();
-            }
-            else if($producto->product_stock < $stock_antiguo){
-                $inventario = new Inventary();
-                $inventario->id_product = $producto->id_product;
-                $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_EGRESO'];
-                $inventario->inventory_stock_amount = ($stock_antiguo - $producto->product_stock);
-                $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_EGRESO_VENTA_F'];
                 $inventario->save();
             }
 
@@ -476,19 +467,11 @@ class ProductoController extends Controller
                                                 if(!$productoPorCodigo->save()){
 
                                                     if($productoPorCodigo->product_stock > $stock_antiguo){
-                                                        $inventario = new Inventary();
+                                                        $inventario = new InventaryI();
                                                         $inventario->id_product = $productoPorCodigo->id_product;
                                                         $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
                                                         $inventario->inventory_stock_amount = ($productoPorCodigo->product_stock - $stock_antiguo);
                                                         $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_INGRESO_P'];
-                                                        $inventario->save();
-                                                    }
-                                                    else if($productoPorCodigo->product_stock < $stock_antiguo){
-                                                        $inventario = new Inventary();
-                                                        $inventario->id_product = $productoPorCodigo->id_product;
-                                                        $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_EGRESO'];
-                                                        $inventario->inventory_stock_amount = ($stock_antiguo - $productoPorCodigo->product_stock);
-                                                        $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_EGRESO_VENTA_F'];
                                                         $inventario->save();
                                                     }
 
@@ -551,7 +534,7 @@ class ProductoController extends Controller
                                         $productoNuevo->product_status = $_ENV['STATUS_ON'];
 
                                         if(!($productoNuevo->save())){
-                                            $inventario = new Inventary();
+                                            $inventario = new InventaryI();
                                             $inventario->id_product = $productoNuevo->id_product;
                                             $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
                                             $inventario->inventory_stock_amount = $productoNuevo->product_stock;

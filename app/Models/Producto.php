@@ -44,8 +44,8 @@ class Producto extends Model
         return $this->hasOne(Promotion::class, 'id_product');
     }
 
-    public function inventary(){
-        return $this->hasOne(Inventary::class, 'id_product');
+    public function inventaryI(){
+        return $this->hasOne(InventaryI::class, 'id_product');
     }
 
     use HasFactory;

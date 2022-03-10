@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Inventary extends Model
+class InventaryI extends Model
 {
-    protected $table = 'inventory';
-    protected $primaryKey = 'id_inventory';
+    protected $table = 'inventory_i';
+    protected $primaryKey = 'id_inventory_i';
 
     const CREATED_AT = null;
 

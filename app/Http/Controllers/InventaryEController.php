@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Inventary;
 use Illuminate\Http\Request;
 
-class InventaryController extends Controller
+class InventaryEController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +13,7 @@ class InventaryController extends Controller
      */
     public function index()
     {
-        $inventario = Inventary::with('producto')->orderBy('create_date', 'desc')->get();
-        return $inventario;
+        //
     }
 
     /**
