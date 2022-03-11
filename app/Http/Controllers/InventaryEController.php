@@ -6,6 +6,9 @@ use App\Models\InventaryE;
 use App\Models\OrderOrderDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
 
 class InventaryEController extends Controller
 {
@@ -45,6 +48,18 @@ class InventaryEController extends Controller
         $orden = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')->where('id_order', '=',  $request->id_order)->get();
         return $orden;
     }
+
+
+    public function getOrderDetailStatusCompleted()
+    {
+        DB::enableQueryLog();
+        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')->whereHas('order', function (Builder $query) {
+            $query->where('id_order_status', '=', $_ENV['ORDEN_COMPLETED']);
+            })->get();
+
+        return $ordenes;
+    }
+
 
     /**
      * Show the form for creating a new resource.

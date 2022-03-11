@@ -106,7 +106,8 @@ Route::get('/inventories/ingreso', [InventaryIController::class, 'index']); //mo
 
 // Rutas para el controlador InventaryEController
 Route::get('/inventories/egreso', [InventaryEController::class, 'index']); //mostrar todas los egresos
-Route::post('/inventories/egreso/getOrder', [InventaryEController::class, 'getOrderDetail']); //Obetener el detalle total de una orden
+Route::post('/inventories/egreso/getOrder', [InventaryEController::class, 'getOrderDetail']); //Obetener el detalle total de una orden que este en cualquier estadi
+Route::get('/inventories/egreso/getOrderCompleted', [InventaryEController::class, 'getOrderDetailStatusCompleted']);
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes
