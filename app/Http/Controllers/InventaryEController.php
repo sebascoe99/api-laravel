@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderOrderDetail;
 use App\Models\OrderStatus;
+use App\Models\Producto;
 use App\Models\TypePay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -208,6 +209,17 @@ class InventaryEController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
             }
+
+            $producto = Producto::findOrFail($request->id_product);//Se obtiene el objeto producto por el id
+            $producto->product_stock = ($producto->product_stock - $request->inventory_stock_amount);
+
+            if(!$producto->save()){
+                return response()->json([
+                    'message' => 'Ocurrio un error al actualizar el nuevo stock del producto',
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+            }
+
 
             return response()->json([
                 'message' => 'Guardado con exito',
