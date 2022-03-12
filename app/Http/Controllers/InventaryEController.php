@@ -19,7 +19,10 @@ class InventaryEController extends Controller
      */
     public function index()
     {
-        $inventarioE = InventaryE::with('order', 'order.orderStatus')->orderBy('create_date', 'desc')->get();
+        $inventarioE = InventaryE::with('order', 'order.user', 'order.orderStatus')->whereHas('order', function (Builder $query) {
+            $query->where('id_order_status', '=', $_ENV['ORDEN_COMPLETED']);
+            })->orderBy('create_date', 'desc')->get();
+            
         return $inventarioE;
     }
 
@@ -52,7 +55,6 @@ class InventaryEController extends Controller
 
     public function getOrderDetailStatusCompleted()
     {
-        DB::enableQueryLog();
         $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')->whereHas('order', function (Builder $query) {
             $query->where('id_order_status', '=', $_ENV['ORDEN_COMPLETED']);
             })->get();
