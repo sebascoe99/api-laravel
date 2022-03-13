@@ -123,7 +123,7 @@ Route::post('/validate/user/password', [ValidateFieldsController::class, 'valida
 Route::post('/validate/promotion/product', [ValidateFieldsController::class, 'validateProductInPromotion']);
 
 // Rutas para el controlador ShoppingCartController
-Route::post('/shopping/card/{id}', [ShoppingCartController::class, 'getProductCardByIdUser']);
+Route::post('/shopping/card/get', [ShoppingCartController::class, 'getProductCardByIdUser']);
 Route::post('/shopping/card/add', [ShoppingCartController::class, 'saveProductCard']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

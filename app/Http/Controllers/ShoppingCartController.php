@@ -46,8 +46,8 @@ class ShoppingCartController extends Controller
         $carrito->id_user = $request->id_user;
         $carrito->id_product = $request->id_product;
         $carrito->shopping_cart_status = $_ENV['STATUS_ON'];
-        
-        if($carrito->save){
+
+        if($carrito->save()){
             return response()->json([
                 'message' => 'Guardado con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
@@ -62,7 +62,31 @@ class ShoppingCartController extends Controller
 
     public function getProductCardByIdUser(Request $request)
     {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
 
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        $carritoxUsuario = ShoppingCart::with('producto', 'user')->where("shopping_cart_status", "=", $_ENV['STATUS_ON'])
+        ->where("id_user", "=", $request->id_user)
+        ->orderBy('create_date', 'desc')->get();
+        return $carritoxUsuario;
     }
 
     /**
