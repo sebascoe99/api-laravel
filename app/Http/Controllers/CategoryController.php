@@ -279,4 +279,12 @@ class CategoryController extends Controller
             ]);
         }
     }
+
+    public function getCategoryByCountProduct(){
+        //DB::enableQueryLog();
+        $categoriasxproductos = Category::withCount('producto')->orderBy('create_date', 'desc')->get();
+        return $categoriasxproductos;
+
+
+    }
 }

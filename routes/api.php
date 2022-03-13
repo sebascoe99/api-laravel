@@ -45,7 +45,6 @@ Route::post('/products', [ProductoController::class, 'store']); //crear un produ
 Route::put('/products/{id}', [ProductoController::class, 'update']); //actualizar un producto
 Route::delete('/products/{id}', [ProductoController::class, 'destroy']); //eliminar un producto
 Route::post('/products/upload/excel', [ProductoController::class, 'uploadExcel']);
-Route::post('/products/category', [ProductoController::class, 'getProductByCategory']);
 
 // Rutas para el controlador ProviderController
 Route::get('/providers', [ProviderController::class, 'index']); //mostrar todos los proveedores
@@ -58,6 +57,7 @@ Route::get('/categories', [CategoryController::class, 'index']); //mostrar todos
 Route::post('/categories', [CategoryController::class, 'store']); //crear un proveedor
 Route::put('/categories/{id}', [CategoryController::class, 'update']); //actualizar un proveedor
 Route::delete('/categories/{id}', [CategoryController::class, 'destroy']); //eliminar un proveedor
+Route::get('/categories/products', [CategoryController::class, 'getCategoryByCountProduct']);
 
 // Rutas para el controlador BrandController
 Route::get('/brands', [BrandController::class, 'index']); //mostrar todos los proveedores

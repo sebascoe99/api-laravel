@@ -20,6 +20,6 @@ class Category extends Model
     use HasFactory;
 
     public function producto(){
-        return $this->hasOne(Producto::class, 'id_category');
+        return $this->hasMany(Producto::class, 'id_category');
     }
 }

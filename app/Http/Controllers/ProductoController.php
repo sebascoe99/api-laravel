@@ -592,31 +592,4 @@ class ProductoController extends Controller
         }
     }
 
-    public function getProductByCategory(Request $request){
-        try {
-            $validator = Validator::make($request->all(), [
-                'id_category' => 'required|numeric|min:0|not_in:0',
-            ],
-            [
-                'required' => 'El campo :attribute es requerido'
-            ]);
-
-            if($validator->fails()){
-                return response()->json([
-                    'message' => $validator->errors(),
-                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
-                ]);
-            }
-        }catch (\Exception $e){
-                return response()->json([
-                    'message' => $e->getMessage(),
-                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
-                ]);
-        }
-
-        $productos = Producto::with('category', 'provider', 'brand', 'productUnit')->where('id_category', '=', $request->id_category)->orderBy('create_date', 'desc')->get();
-        return $productos;
-
-    }
-
 }
