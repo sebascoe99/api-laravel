@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class PromotionController extends Controller
 {
@@ -19,7 +20,7 @@ class PromotionController extends Controller
      */
     public function index()
     {
-        $promociones = Promotion::with('producto')->orderBy('create_date', 'desc')->get();
+        $promociones = Promotion::with('producto')->where("promotion_status", "=", $_ENV['STATUS_ON'])->orderBy('create_date', 'desc')->get();
         return $promociones;
     }
 

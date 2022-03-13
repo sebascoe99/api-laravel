@@ -83,7 +83,7 @@ class ShoppingCartController extends Controller
                 ]);
         }
 
-        $carritoxUsuario = ShoppingCart::with('producto', 'user')->where("shopping_cart_status", "=", $_ENV['STATUS_ON'])
+        $carritoxUsuario = ShoppingCart::with('producto.category', 'producto.brand', 'user')->where("shopping_cart_status", "=", $_ENV['STATUS_ON'])
         ->where("id_user", "=", $request->id_user)
         ->orderBy('create_date', 'desc')->get();
         return $carritoxUsuario;
