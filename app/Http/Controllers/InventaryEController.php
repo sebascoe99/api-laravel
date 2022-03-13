@@ -106,7 +106,6 @@ class InventaryEController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
@@ -137,9 +136,9 @@ class InventaryEController extends Controller
             ]);
         }
 
-        $voucher_number_final = intval(Order::whereRaw('id_order = (select max(`id_order`) from order)')->pluck('id_order')->first());
-        if(isset($voucher_number_final) && is_null($voucher_number_final)){
-            $vaucher_present = $voucher_number_final + 1; //tu numero
+        $voucher_number_final = Order::max('id_order');
+        if(isset($voucher_number_final) && !is_null($voucher_number_final)){
+            $vaucher_present = $voucher_number_final + 1;
             $vaucher_present = str_pad($vaucher_present, 10, '0', STR_PAD_LEFT);
         }else{
             $vaucher_present = 1;
@@ -156,13 +155,12 @@ class InventaryEController extends Controller
             $id_order = $orden->id_order;
             $id_pago_efectivo = TypePay::where('pay_description', '=', $_ENV['TYPE_PAY_CASH'])->pluck('id_pay')->first();
 
-            if(!isset($id_order_status_completed)){
+            if(!isset($id_pago_efectivo)){
                 return response()->json([
                     'message' => 'Ocurrio un error interno al agregar el tipo de pago',
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
             }
-
 
             $orden_detalle = new OrderDetail();
             $orden_detalle->id_product = $request->id_product;
