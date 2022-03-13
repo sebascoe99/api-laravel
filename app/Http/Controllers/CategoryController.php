@@ -284,7 +284,5 @@ class CategoryController extends Controller
         //DB::enableQueryLog();
         $categoriasxproductos = Category::withCount('producto')->orderBy('create_date', 'desc')->get();
         return $categoriasxproductos;
-
-
     }
 }

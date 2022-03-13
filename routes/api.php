@@ -12,6 +12,7 @@ use App\Http\Controllers\InventaryEController;
 use App\Http\Controllers\InventaryIController;
 use App\Http\Controllers\ProductoUnitController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\TypeProviderController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ValidateFieldsController;
@@ -121,7 +122,9 @@ Route::post('/validate/user/identification', [ValidateFieldsController::class, '
 Route::post('/validate/user/password', [ValidateFieldsController::class, 'validateUserPassword']);
 Route::post('/validate/promotion/product', [ValidateFieldsController::class, 'validateProductInPromotion']);
 
-
+// Rutas para el controlador ShoppingCartController
+Route::post('/shopping/card/{id}', [ShoppingCartController::class, 'getProductCardByIdUser']);
+Route::post('/shopping/card/add', [ShoppingCartController::class, 'saveProductCard']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

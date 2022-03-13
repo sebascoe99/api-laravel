@@ -56,6 +56,10 @@ class Producto extends Model
         return $this->hasOne(OrderDetail::class, 'id_product');
     }
 
+    public function shopping_cart(){
+        return $this->hasOne(ShoppingCart::class, 'id_shopping_cart');
+    }
+
     use HasFactory;
     /*protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
                             'product_image', 'product_status', 'product_rating'];*/

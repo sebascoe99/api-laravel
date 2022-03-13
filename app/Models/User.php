@@ -72,4 +72,8 @@ class User extends Authenticatable
     public function order(){
         return $this->hasOne(Order::class, 'id_order');
     }
+
+    public function shopping_cart(){
+        return $this->hasOne(ShoppingCart::class, 'id_shopping_cart');
+    }
 }
