@@ -15,7 +15,7 @@ class ShoppingCartController extends Controller
      */
     public function index()
     {
-        //
+        return "hola";
     }
 
     public function saveProductCard(Request $request)
@@ -89,69 +89,77 @@ class ShoppingCartController extends Controller
         return $carritoxUsuario;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function deleteOneProductInCard(Request $request){
+        //return $request->all();
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0',
+                'id_product' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        if(ShoppingCart::query()->where('id_user', '=', $request->id_user)->where('id_product', '=', $request->id_product)->update(['shopping_cart_status' =>  $_ENV['STATUS_OFF']])){
+            return response()->json([
+                'message' => 'Eliminado con exito',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function deleteAllProductInCard(Request $request){
+        //return $request->all();
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        if(ShoppingCart::query()->where('id_user', '=', $request->id_user)->update(['shopping_cart_status' =>  $_ENV['STATUS_OFF']])){
+            return response()->json([
+                'message' => 'Eliminado con exito',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

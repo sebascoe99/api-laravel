@@ -125,6 +125,9 @@ Route::post('/validate/promotion/product', [ValidateFieldsController::class, 'va
 // Rutas para el controlador ShoppingCartController
 Route::post('/shopping/card/get', [ShoppingCartController::class, 'getProductCardByIdUser']);
 Route::post('/shopping/card/add', [ShoppingCartController::class, 'saveProductCard']);
+Route::post('/shopping/card/delete', [ShoppingCartController::class, 'deleteOneProductInCard']);
+Route::post('/shopping/card/delete/all', [ShoppingCartController::class, 'deleteAllProductInCard']);
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
