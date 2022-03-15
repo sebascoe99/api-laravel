@@ -464,8 +464,8 @@ class ProductoController extends Controller
                                                 }
 
                                                 $productoPorCodigo->id_user = intval($request->id_user);
-                                                if(!$productoPorCodigo->save()){
 
+                                                if($productoPorCodigo->save()){
                                                     if($productoPorCodigo->product_stock > $stock_antiguo){
                                                         $inventario = new InventaryI();
                                                         $inventario->id_product = $productoPorCodigo->id_product;
@@ -474,7 +474,7 @@ class ProductoController extends Controller
                                                         $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_INGRESO_P'];
                                                         $inventario->save();
                                                     }
-
+                                                }else{
                                                     return response()->json([
                                                         'message' => 'Ocurrio un error interno en el servidor',
                                                         'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
