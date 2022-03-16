@@ -26,7 +26,7 @@ class InventaryEController extends Controller
      */
     public function index()
     {
-        $inventarioE = InventaryE::with('order', 'order.user', 'order.orderStatus')->whereHas('order', function (Builder $query) {
+        $inventarioE = InventaryE::with('order', 'order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.typePay')->whereHas('order', function (Builder $query) {
             $id_order_status_completed = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_COMPLETED'])->pluck('id_order_status')->first();
 
             if(!isset($id_order_status_completed)){

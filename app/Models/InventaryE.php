@@ -21,5 +21,9 @@ class InventaryE extends Model
         return $this->belongsTo(Order::class, 'id_order');
     }
 
+    public function orderDetail(){
+        return $this->belongsTo(OrderDetail::class, 'id_order_detail');
+    }
+
     use HasFactory;
 }
