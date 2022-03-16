@@ -138,11 +138,15 @@ class InventaryEController extends Controller
 
         $voucher_number_final = Order::max('id_order');
         if(isset($voucher_number_final) && !is_null($voucher_number_final)){
+            $serie = '001';
             $vaucher_present = $voucher_number_final + 1;
-            $vaucher_present = str_pad($vaucher_present, 10, '0', STR_PAD_LEFT);
+            $vaucher_present = str_pad($vaucher_present, 9, '0', STR_PAD_LEFT);
+            $vaucher_present = $serie.'-'. $serie.'-'.$vaucher_present;
         }else{
+            $serie = '001';
             $vaucher_present = 1;
-            $vaucher_present = str_pad($vaucher_present, 10, '0', STR_PAD_LEFT);
+            $vaucher_present = str_pad($vaucher_present, 9, '0', STR_PAD_LEFT);
+            $vaucher_present = $serie.'-'. $serie.'-'.$vaucher_present;
         }
 
         $orden = new Order();
