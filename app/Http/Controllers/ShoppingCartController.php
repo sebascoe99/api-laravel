@@ -24,8 +24,6 @@ class ShoppingCartController extends Controller
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
                 'id_product' => 'required|numeric|min:0|not_in:0',
-                'product_offered' => 'required|numeric|min:0|not_in:0',
-                'product_offered_price_total' => 'required|min:0|not_in:0',
             ],
             [
                 'required' => 'El campo :attribute es requerido'
