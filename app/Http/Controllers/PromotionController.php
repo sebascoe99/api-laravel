@@ -20,7 +20,7 @@ class PromotionController extends Controller
      */
     public function index()
     {
-        $promociones = Promotion::with('producto')->where("promotion_status", "=", $_ENV['STATUS_ON'])->orderBy('create_date', 'desc')->get();
+        $promociones = Promotion::with('producto')->orderBy('create_date', 'desc')->get();
         return $promociones;
     }
 
