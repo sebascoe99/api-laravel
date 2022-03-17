@@ -201,6 +201,7 @@ class InventaryEController extends Controller
 
             $inventario_e = new InventaryE();
             $inventario_e->id_order = $id_order;
+            $inventario_e->id_order_detail = $orden_detalle->id_order_detail;
             $inventario_e->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_EGRESO'];
             $inventario_e->inventory_stock_amount = $request->inventory_stock_amount;
             $inventario_e->inventory_description = $description;
