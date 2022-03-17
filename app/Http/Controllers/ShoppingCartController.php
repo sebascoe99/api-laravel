@@ -15,7 +15,7 @@ class ShoppingCartController extends Controller
      */
     public function index()
     {
-        return "hola";
+        //return "hola";
     }
 
     public function saveProductCard(Request $request)
@@ -24,6 +24,8 @@ class ShoppingCartController extends Controller
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
                 'id_product' => 'required|numeric|min:0|not_in:0',
+                'product_offered' => 'required|numeric|min:0|not_in:0',
+                'product_offered_price_total' => 'required|min:0|not_in:0',
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -46,6 +48,11 @@ class ShoppingCartController extends Controller
         $carrito->id_user = $request->id_user;
         $carrito->id_product = $request->id_product;
         $carrito->shopping_cart_status = $_ENV['STATUS_ON'];
+        if(isset($request->product_offered))
+            $carrito->product_offered = $request->product_offered;
+        if(isset($request->product_offered_price_total))
+            $carrito->product_offered_price_total = $request->product_offered_price_total;
+
 
         if($carrito->save()){
             return response()->json([

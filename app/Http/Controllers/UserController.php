@@ -135,8 +135,6 @@ class UserController extends Controller
                 'id_identification_type' => 'required|numeric|min:0|not_in:0',
                 'user_name' => 'required',
                 'user_lastName' => 'required',
-                'email' => 'required|email',
-                'user_document' => 'required',
                 'user_phone' => 'required',
                 'user_address' => 'required'
             ],
