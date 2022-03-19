@@ -245,7 +245,7 @@ class OrderController extends Controller
         $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')
         ->whereHas('order', function (Builder $query) {
             $query->where('id_user', '=', static::$id_user_global);
-            })->get();
+            })->orderBy('create_date', 'desc')->get();
 
         return $ordenes;
     }
@@ -263,7 +263,7 @@ class OrderController extends Controller
             }
 
             $query->where('id_order_status', '=', $id_order_status_pending);
-            })->get();
+            })->orderBy('create_date', 'desc')->get();
 
         return $ordenes;
     }
