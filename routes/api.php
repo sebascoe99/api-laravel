@@ -115,7 +115,8 @@ Route::post('/inventories/egreso', [InventaryEController::class, 'store']);
 
 Route::post('/createOrder', [OrderController::class, 'store']);
 Route::post('/order/user', [OrderController::class, 'getOrderByUser']);
-
+Route::get('/order/seller', [OrderController::class, 'getOrderBySeller']);
+Route::post('/order/change', [OrderController::class, 'changeStatusOrder']);
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes

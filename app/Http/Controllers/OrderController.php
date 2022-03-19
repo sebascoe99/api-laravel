@@ -250,6 +250,68 @@ class OrderController extends Controller
         return $ordenes;
     }
 
+    public function getOrderBySeller(){
+        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')
+        ->whereHas('order', function (Builder $query) {
+            $id_order_status_pending = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_PENDING'])->pluck('id_order_status')->first();
+
+            if(!isset($id_order_status_pending)){
+                return response()->json([
+                    'message' => 'Ocurrio un error interno en el servidor',
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+            }
+
+            $query->where('id_order_status', '=', $id_order_status_pending);
+            })->get();
+
+        return $ordenes;
+    }
+
+    public function changeStatusOrder(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_order' => 'required|numeric|min:0|not_in:0'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        $id_order_status_completed = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_COMPLETED'])->pluck('id_order_status')->first();
+        if(!isset($id_order_status_completed)){
+            return response()->json([
+                'message' => 'Ocurrio un error al intentar obtener el status completado de la orden',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+        $orden = Order::find($request->id_order);
+        $orden->id_order_status = $id_order_status_completed;
+        if($orden->save()){
+            return response()->json([
+                'message' => 'Orden completada',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+    }
+
     /**
      * Display the specified resource.
      *
