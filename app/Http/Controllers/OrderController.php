@@ -8,6 +8,7 @@ use App\Models\OrderDetail;
 use App\Models\OrderOrderDetail;
 use App\Models\OrderStatus;
 use App\Models\Producto;
+use App\Models\ShoppingCart;
 use App\Models\TypePay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -63,6 +64,7 @@ class OrderController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
         }
+
         $id_order_status_pending = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_PENDING'])->pluck('id_order_status')->first();
         if(!isset($id_order_status_pending)){
             return response()->json([
@@ -95,28 +97,34 @@ class OrderController extends Controller
             $id_pago_paypal = TypePay::where('pay_description', '=', $_ENV['TYPE_PAY_PAYPAL'])->pluck('id_pay')->first();
 
             if(!isset($id_pago_paypal)){
+                $orden = Order::find($id_order);
+                $orden->delete();
+
                 return response()->json([
                     'message' => 'Ocurrio un error interno al agregar el tipo de pago',
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
             }
 
-            foreach($request->products as $product){
-                return $product->id_product;
+            $products = (array) $request->products;
+            foreach($products as $product){
                 $orden_detalle = new OrderDetail();
-                $orden_detalle->id_product = $product->id_product;
+                $orden_detalle->id_product = intval($product['id_product']);
                 $orden_detalle->id_pay = $id_pago_paypal;
-                $orden_detalle->order_detail_quantity = $product->product_amount_sail;
-                if(isset($product->product_offered)){
-                    $orden_detalle->order_detail_discount = $product->product_offered;
+                $orden_detalle->order_detail_quantity = intval($product['product_amount_sail']);
+                if(array_key_exists('product_offered', $product)){
+                    $orden_detalle->order_detail_discount = $product['product_offered'];
                 }else{
                     $orden_detalle->order_detail_discount = 0;
                 }
-                $orden_detalle->order_detail_subtotal = ($product->product_price * $product->product_amount_sail);
-                $orden_detalle->order_detail_iva = 0;
-                $orden_detalle->order_detail_total = ($product->product_price * $product->product_amount_sail);
+                $orden_detalle->order_detail_subtotal = ($product['product_price'] * intval($product['product_amount_sail']));
+                $orden_detalle->order_detail_iva = 12;
+                $orden_detalle->order_detail_total = ($product['product_price'] * intval($product['product_amount_sail']));
 
                 if(!$orden_detalle->save()){
+                    $orden = Order::find($id_order);
+                    $orden->delete();
+
                     return response()->json([
                         'message' => 'Ocurrio un error interno al crear la orden detalle',
                         'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
@@ -128,6 +136,12 @@ class OrderController extends Controller
                 $orden_orden_detalle->id_order_detail = $orden_detalle->id_order_detail;
 
                 if(!$orden_orden_detalle->save()){
+                    $orden = Order::find($id_order);
+                    $orden->delete();
+
+                    $ordenDetalle = OrderDetail::find($orden_detalle->id_order_detail);
+                    $ordenDetalle->delete();
+
                     return response()->json([
                         'message' => 'Ocurrio un error interno al crear la orden detalle maestro',
                         'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
@@ -139,20 +153,42 @@ class OrderController extends Controller
                 $inventario_e->id_order = $id_order;
                 $inventario_e->id_order_detail = $orden_detalle->id_order_detail;
                 $inventario_e->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_EGRESO'];
-                $inventario_e->inventory_stock_amount = $product->product_amount_sail;
+                $inventario_e->inventory_stock_amount = $product['product_amount_sail'];
                 $inventario_e->inventory_description = $description;
 
                 if(!$inventario_e->save()){
+                    $orden = Order::find($id_order);
+                    $orden->delete();
+
+                    $ordenDetalle = OrderDetail::find($orden_detalle->id_order_detail);
+                    $ordenDetalle->delete();
+
+                    $orden_orden_detalle = OrderOrderDetail::find($orden_orden_detalle->id_order_order_detail);
+                    $orden_orden_detalle->delete();
+
+
                     return response()->json([
                         'message' => 'Ocurrio un error interno al crear la orden dentro del inventario de tipo egreso',
                         'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                     ]);
                 }
 
-                $producto = Producto::findOrFail($request->id_product);//Se obtiene el objeto producto por el id
-                $producto->product_stock = ($producto->product_stock - $product->product_amount_sail);
+                $producto = Producto::findOrFail(intval($product['id_product']));//Se obtiene el objeto producto por el id
+                $producto->product_stock = ($producto->product_stock - intval($product['product_amount_sail']));
 
                 if(!$producto->save()){
+                    $orden = Order::find($id_order);
+                    $orden->delete();
+
+                    $ordenDetalle = OrderDetail::find($orden_detalle->id_order_detail);
+                    $ordenDetalle->delete();
+
+                    $ordenOrdenDetalle = OrderOrderDetail::find($orden_orden_detalle->id_order_order_detail);
+                    $ordenOrdenDetalle->delete();
+
+                    $inventarioE = InventaryE::find($inventario_e->id_inventory_e);
+                    $inventarioE->delete();
+
                     return response()->json([
                         'message' => 'Ocurrio un error al actualizar el nuevo stock del producto',
                         'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
@@ -160,10 +196,17 @@ class OrderController extends Controller
                 }
             }
 
-            return response()->json([
-                'message' => 'Guardado con exito',
-                'status' => $_ENV['CODE_STATUS_OK']
-            ]);
+            if(ShoppingCart::query()->where('id_user', '=', $request->id_user)->update(['shopping_cart_status' =>  $_ENV['STATUS_OFF']])){
+                return response()->json([
+                    'message' => 'Orden generada con exito',
+                    'status' => $_ENV['CODE_STATUS_OK']
+                ]);
+            }else{
+                return response()->json([
+                    'message' => 'Ocurrio un error interno en el servidor',
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+            }
         }
         else{
             return response()->json([
