@@ -42,7 +42,6 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
         try {
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
@@ -101,7 +100,9 @@ class OrderController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
             }
+
             foreach($request->products as $product){
+                return $product->id_product;
                 $orden_detalle = new OrderDetail();
                 $orden_detalle->id_product = $product->id_product;
                 $orden_detalle->id_pay = $id_pago_paypal;
