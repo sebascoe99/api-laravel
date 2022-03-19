@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentificationTypeController;
 use App\Http\Controllers\InventaryEController;
 use App\Http\Controllers\InventaryIController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductoUnitController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\ShoppingCartController;
@@ -111,6 +112,9 @@ Route::get('/inventories/egreso', [InventaryEController::class, 'index']); //mos
 Route::post('/inventories/egreso/getOrder', [InventaryEController::class, 'getOrderDetail']); //Obetener el detalle total de una orden que este en cualquier estadi
 Route::get('/inventories/egreso/getOrderCompleted', [InventaryEController::class, 'getOrderDetailStatusCompleted']);
 Route::post('/inventories/egreso', [InventaryEController::class, 'store']);
+
+Route::post('/createOrder', [OrderController::class, 'store']);
+
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes
