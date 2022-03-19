@@ -242,7 +242,28 @@ class OrderController extends Controller
 
         static::$id_user_global = $request->id_user;
 
-        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')
+        $ordenes = OrderOrderDetail::query()
+        ->with((['order.user' => function ($query) {
+            $query->select('id_user', 'user_name', 'user_lastName', 'email', 'user_document', 'user_phone', 'user_address');
+        }]))
+        ->with((['order.orderStatus' => function ($query) {
+            $query->select('id_order_status', 'order_status_description');
+        }]))
+        ->with((['orderDetail' => function ($query) {
+            $query->select('id_order_detail', 'id_product', 'id_pay', 'order_detail_quantity', 'order_detail_discount', 'order_detail_subtotal', 'order_detail_iva', 'order_detail_total');
+        }]))
+        ->with((['orderDetail.producto' => function ($query) {
+            $query->select('id_product', 'id_provider', 'id_product_unit', 'product_name', 'product_code', 'product_description', 'product_price', 'product_rating');
+        }]))
+        ->with((['orderDetail.producto.provider' => function ($query) {
+            $query->select('id_provider', 'provider_identification', 'provider_name', 'provider_address', 'provider_email', 'provider_phone');
+        }]))
+        ->with((['orderDetail.producto.productUnit' => function ($query) {
+            $query->select('id_product_unit', 'name_product_unit', 'description_product_unit');
+        }]))
+        ->with((['orderDetail.typePay' => function ($query) {
+            $query->select('id_pay', 'pay_description');
+        }]))
         ->whereHas('order', function (Builder $query) {
             $query->where('id_user', '=', static::$id_user_global);
             })->orderBy('create_date', 'desc')->get();
