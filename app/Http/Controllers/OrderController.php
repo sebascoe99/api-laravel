@@ -12,9 +12,11 @@ use App\Models\ShoppingCart;
 use App\Models\TypePay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrderController extends Controller
 {
+    private static $id_user_global = null;
     /**
      * Display a listing of the resource.
      *
@@ -214,6 +216,38 @@ class OrderController extends Controller
                 'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
             ]);
         }
+    }
+
+    public function getOrderByUser(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        static::$id_user_global = $request->id_user;
+
+        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')
+        ->whereHas('order', function (Builder $query) {
+            $query->where('id_user', '=', static::$id_user_global);
+            })->get();
+
+        return $ordenes;
     }
 
     /**

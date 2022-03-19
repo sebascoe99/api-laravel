@@ -114,6 +114,7 @@ Route::get('/inventories/egreso/getOrderCompleted', [InventaryEController::class
 Route::post('/inventories/egreso', [InventaryEController::class, 'store']);
 
 Route::post('/createOrder', [OrderController::class, 'store']);
+Route::post('/order/user', [OrderController::class, 'getOrderByUser']);
 
 
 // Rutas para el controlador AuditController
