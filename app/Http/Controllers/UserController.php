@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -80,17 +81,27 @@ class UserController extends Controller
         $user->password = Hash::make($request->password);
         $user->password_encrypt = Crypt::encryptString($request->password);
         $user->user_phone = $request->user_phone;
-        $user->user_address = $request->user_address;
+        //$user->user_address = $request->user_address;
         $user->user_status = $_ENV['STATUS_ON'];
 
         $user->save();
         //$token = $user->createToken('auth_token')->plainTextToken;
 
         if(isset($user->id_user)){
-            return response()->json([
-                'message' => 'Usuario creado exitosamente',
-                'status' => $_ENV['CODE_STATUS_OK']
-            ]);
+
+            $address = new Address();
+            $address->id_user = $user->id_user;
+            $address->user_address = $request->user_address;
+            $address->address_status = $_ENV['STATUS_ON'];
+            $address->save();
+
+            if(isset($address->id_address)){
+                
+                return response()->json([
+                    'message' => 'Usuario creado exitosamente',
+                    'status' => $_ENV['CODE_STATUS_OK']
+                ]);
+            }
         }
         return response()->json([
             'message' => 'Ocurrio un error interno en el servidor',

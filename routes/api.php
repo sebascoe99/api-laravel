@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProviderController;
@@ -134,6 +135,10 @@ Route::post('/shopping/card/add', [ShoppingCartController::class, 'saveProductCa
 Route::post('/shopping/card/delete', [ShoppingCartController::class, 'deleteOneProductInCard']);
 Route::post('/shopping/card/delete/all', [ShoppingCartController::class, 'deleteAllProductInCard']);
 
+// Rutas para el controlador AddressController
+Route::post('/address/{id}', [AddressController::class, 'index']);
+Route::post('/address/add/{id}', [AddressController::class, 'addNewAdrress']);
+//
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

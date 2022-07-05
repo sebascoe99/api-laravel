@@ -76,4 +76,8 @@ class User extends Authenticatable
     public function shopping_cart(){
         return $this->hasOne(ShoppingCart::class, 'id_shopping_cart');
     }
+
+    public function address(){
+        return $this->hasOne(Address::class, 'id_address');
+    }
 }
