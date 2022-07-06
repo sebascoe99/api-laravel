@@ -47,6 +47,7 @@ class PromotionController extends Controller
                 'id_user' => 'required|numeric|min:0|not_in:0',
                 'id_product' => 'required|numeric|min:0|not_in:0',
                 'promotion_discount' => 'required|numeric|min:0|not_in:0',
+                'promotion_date_start' => 'required',
                 'promotion_date_of_expiry' => 'required',
                 'promotion_status' => 'required|numeric|min:0'
             ],
@@ -76,6 +77,7 @@ class PromotionController extends Controller
 
         $promocion->id_product = $producto->id_product;
         $promocion->promotion_discount = $request->promotion_discount;
+        $promocion->promotion_date_start = $request->promotion_date_start;
         $promocion->promotion_date_of_expiry = $request->promotion_date_of_expiry;
         $promocion->promotion_status = $request->promotion_status;
         $promocion->save();
