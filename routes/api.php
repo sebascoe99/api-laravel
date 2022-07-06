@@ -136,8 +136,10 @@ Route::post('/shopping/card/delete', [ShoppingCartController::class, 'deleteOneP
 Route::post('/shopping/card/delete/all', [ShoppingCartController::class, 'deleteAllProductInCard']);
 
 // Rutas para el controlador AddressController
-Route::post('/address/{id}', [AddressController::class, 'index']);
-Route::post('/address/add/{id}', [AddressController::class, 'addNewAdrress']);
+Route::get('/address/{id}', [AddressController::class, 'index']);
+Route::post('/address', [AddressController::class, 'store']);
+Route::put('/address/{id}', [AddressController::class, 'update']); //actualizar una promoción
+Route::delete('/address/{id}', [AddressController::class, 'destroy']); //eliminar un promoción
 //
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

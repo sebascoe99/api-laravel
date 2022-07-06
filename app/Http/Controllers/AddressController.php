@@ -6,6 +6,8 @@ use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class AddressController extends Controller
 {
@@ -17,49 +19,8 @@ class AddressController extends Controller
     public function index(Request $request)
     {
         $direcciones = Address::where('id_user', "=", $request->id)->where('address_status', "=", $_ENV['STATUS_ON'])
-        ->orderBy('create_date', 'desc')->get();
+        ->orderBy('create_date', 'asc')->get();
         return $direcciones;
-    }
-
-    public function addNewAdrress(Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'user_address' => 'required',
-            ],
-            [
-                'required' => 'El campo :attribute es requerido'
-            ]);
-
-            if($validator->fails()){
-                return response()->json([
-                    'message' => $validator->errors(),
-                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
-                ]);
-            }
-        }catch (\Exception $e){
-                return response()->json([
-                    'message' => $e->getMessage(),
-                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
-                ]);
-        }
-
-        $address = new Address();
-        $address->id_user = $request->id;
-        $address->user_address = $request->user_address;
-        $address->address_status = $_ENV['STATUS_ON'];
-        $address->save();
-
-        if(isset($address->id_address)){
-            return response()->json([
-                'message' => 'Dirección guardada exitosamente',
-                'status' => $_ENV['CODE_STATUS_OK']
-            ]);
-        }
-        return response()->json([
-            'message' => 'Ocurrio un error interno en el servidor',
-            'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
-        ]);
     }
 
     /**
@@ -80,7 +41,44 @@ class AddressController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required',
+                'user_address' => 'required'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+        }
+
+        $address = new Address();
+        $address->id_user = $request->id_user;
+        $address->user_address = $request->user_address;
+        $address->address_status = $_ENV['STATUS_ON'];
+        $address->save();
+
+        if(isset($address->id_address)){
+            return response()->json([
+                'message' => 'Dirección guardada exitosamente',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }
+        return response()->json([
+            'message' => 'Ocurrio un error interno en el servidor',
+            'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+        ]);
     }
 
     /**
@@ -112,9 +110,43 @@ class AddressController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_address' => 'required'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+        $direccion = Address::findOrFail($request->id);//Se obtiene el objeto address por el id
+        $direccion->user_address = $request->user_address;
+        $direccion->save();
+
+        if(isset($direccion->id_address)){
+            return response()->json([
+                'message' => 'Dirección actualizada con éxito',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
     }
 
     /**
@@ -123,8 +155,20 @@ class AddressController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $direccion = Address::findOrFail($request->id);
+        
+        $direccion->address_status = $_ENV['STATUS_OFF'];
+        if($direccion->save()){
+            return response()->json([
+                'message' => 'Eliminado correctamente',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }
+        return response()->json([
+            'message' => 'Ocurrio un error interno en el servidor',
+            'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+        ]);
     }
 }
