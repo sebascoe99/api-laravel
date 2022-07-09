@@ -43,8 +43,9 @@ class AddressController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required',
-                'user_address' => 'required'
+                'id_user' => 'required|numeric|min:0|not_in:0',
+                'user_address' => 'required',
+                'address_description' => 'required'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -66,6 +67,7 @@ class AddressController extends Controller
         $address = new Address();
         $address->id_user = $request->id_user;
         $address->user_address = $request->user_address;
+        $address->address_description  = $request->address_description ;
         $address->address_status = $_ENV['STATUS_ON'];
         $address->save();
 
@@ -158,7 +160,7 @@ class AddressController extends Controller
     public function destroy(Request $request)
     {
         $direccion = Address::findOrFail($request->id);
-        
+
         $direccion->address_status = $_ENV['STATUS_OFF'];
         if($direccion->save()){
             return response()->json([
