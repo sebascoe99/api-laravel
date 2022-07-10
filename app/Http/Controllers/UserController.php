@@ -149,7 +149,7 @@ class UserController extends Controller
                 'user_name' => 'required',
                 'user_lastName' => 'required',
                 'user_phone' => 'required',
-                'user_address' => 'required'
+                //'user_address' => 'required'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -182,7 +182,7 @@ class UserController extends Controller
         }
 
         $user->user_phone = $request->user_phone;
-        $user->user_address = $request->user_address;
+        //$user->user_address = $request->user_address;
         $user->user_status = $_ENV['STATUS_ON'];
         //$token = $user->createToken('auth_token')->plainTextToken;
 
