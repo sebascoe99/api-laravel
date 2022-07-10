@@ -24,7 +24,8 @@ class AuthController extends Controller
                 'user_document' => 'required',
                 'password' => 'required',
                 'user_phone' => 'required',
-                'user_address' => 'required'
+                'user_address' => 'required',
+                'address_description' => 'required'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -64,6 +65,7 @@ class AuthController extends Controller
             $address->id_user = $user->id_user;
             $address->user_address = $request->user_address;
             $address->address_status = $_ENV['STATUS_ON'];
+            $address->address_description = $request->address_description;
             $address->save();
 
             if(isset($address->id_address)){

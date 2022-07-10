@@ -67,7 +67,7 @@ class AddressController extends Controller
         $address = new Address();
         $address->id_user = $request->id_user;
         $address->user_address = $request->user_address;
-        $address->address_description  = $request->address_description ;
+        $address->address_description  = $request->address_description;
         $address->address_status = $_ENV['STATUS_ON'];
         $address->save();
 
