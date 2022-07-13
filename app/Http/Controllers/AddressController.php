@@ -64,14 +64,14 @@ class AddressController extends Controller
                 ]);
         }
 
-        $address = new Address();
-        $address->id_user = $request->id_user;
-        $address->user_address = $request->user_address;
-        $address->address_description  = $request->address_description;
-        $address->address_status = $_ENV['STATUS_ON'];
-        $address->save();
+        $direccion = new Address();
+        $direccion->id_user = $request->id_user;
+        $direccion->user_address = $request->user_address;
+        $direccion->address_description  = $request->address_description;
+        $direccion->address_status = $_ENV['STATUS_ON'];
+        $direccion->save();
 
-        if(isset($address->id_address)){
+        if(isset($direccion->id_address)){
             return response()->json([
                 'message' => 'Dirección guardada exitosamente',
                 'status' => $_ENV['CODE_STATUS_OK']
@@ -116,7 +116,8 @@ class AddressController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'user_address' => 'required'
+                'user_address' => 'required',
+                'address_description' => 'required'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -136,6 +137,7 @@ class AddressController extends Controller
         }
         $direccion = Address::findOrFail($request->id);//Se obtiene el objeto address por el id
         $direccion->user_address = $request->user_address;
+        $direccion->address_description  = $request->address_description;
         $direccion->save();
 
         if(isset($direccion->id_address)){
