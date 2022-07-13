@@ -140,6 +140,7 @@ Route::get('/address/{id}', [AddressController::class, 'index']);
 Route::post('/address', [AddressController::class, 'store']);
 Route::put('/address/{id}', [AddressController::class, 'update']); //actualizar una promoción
 Route::delete('/address/{id}', [AddressController::class, 'destroy']); //eliminar un promoción
+Route::post('/address/getById/{id}', [AddressController::class, 'getAdrressById']);
 //
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

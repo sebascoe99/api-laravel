@@ -175,4 +175,16 @@ class AddressController extends Controller
             'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
         ]);
     }
+
+    public function getAdrressById(Request $request){
+
+        if(Address::where('id_address', $request->id)->exists()){
+            return Address::findOrFail($request->id);
+        }else{
+            return response()->json([
+                'message' => 'La dirección no existe',
+                'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+            ]);
+        }
+    }
 }
