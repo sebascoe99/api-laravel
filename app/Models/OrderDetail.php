@@ -25,5 +25,9 @@ class OrderDetail extends Model
         return $this->belongsTo(TypePay::class, 'id_pay');
     }
 
+    public function address(){
+        return $this->belongsTo(Address::class, 'id_address');
+    }
+
     use HasFactory;
 }

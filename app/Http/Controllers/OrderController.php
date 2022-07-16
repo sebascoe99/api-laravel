@@ -252,10 +252,13 @@ class OrderController extends Controller
             })->orderBy('create_date', 'desc')->get();
 
         return $ordenes;*/
-
+        
         $ordenes = OrderOrderDetail::query()
         ->with((['order.user' => function ($query) {
-            $query->select('id_user', 'user_name', 'user_lastName', 'email', 'user_document', 'user_phone', 'user_address');
+            $query->select('id_user', 'user_name', 'user_lastName', 'email', 'user_document', 'user_phone');
+        }]))
+        ->with((['orderDetail.address' => function ($query) {
+            $query->select('id_address', 'user_address', 'address_description', 'address_status');
         }]))
         ->with((['order.orderStatus' => function ($query) {
             $query->select('id_order_status', 'order_status_description');
@@ -283,7 +286,7 @@ class OrderController extends Controller
     }
 
     public function getOrderBySeller(){
-        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')
+        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.address', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')
         /*->whereHas('order', function (Builder $query) {
             $id_order_status_pending = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_PENDING'])->pluck('id_order_status')->first();
 
