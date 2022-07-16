@@ -51,7 +51,8 @@ class OrderController extends Controller
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|numeric|min:0|not_in:0',
                 'order_price_total' => 'required|numeric|min:0|not_in:0',
-                'id_address' => 'required|numeric|min:0|not_in:0'
+                'id_address' => 'required|numeric|min:0|not_in:0',
+                'address_reference' => 'required'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -126,6 +127,7 @@ class OrderController extends Controller
                 $orden_detalle->order_detail_iva = 12;
                 $orden_detalle->order_detail_total = ($product['product_price'] * intval($product['product_amount_sail']));
                 $orden_detalle->id_address = $request->id_address;
+                $orden_detalle->address_reference = $request->address_reference;
 
                 if(!$orden_detalle->save()){
                     $orden = Order::find($id_order);
@@ -252,7 +254,7 @@ class OrderController extends Controller
             })->orderBy('create_date', 'desc')->get();
 
         return $ordenes;*/
-        
+
         $ordenes = OrderOrderDetail::query()
         ->with((['order.user' => function ($query) {
             $query->select('id_user', 'user_name', 'user_lastName', 'email', 'user_document', 'user_phone');
