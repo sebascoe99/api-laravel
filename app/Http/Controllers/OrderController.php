@@ -13,6 +13,8 @@ use App\Models\TypePay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -244,6 +246,13 @@ class OrderController extends Controller
 
         static::$id_user_global = $request->id_user;
 
+        /*$ordenes = OrderOrderDetail::with('orderDetail')
+        ->whereHas('order', function (Builder $query) {
+            $query->where('order.id_order', '=', 11);
+            })->orderBy('create_date', 'desc')->get();
+
+        return $ordenes;*/
+
         $ordenes = OrderOrderDetail::query()
         ->with((['order.user' => function ($query) {
             $query->select('id_user', 'user_name', 'user_lastName', 'email', 'user_document', 'user_phone', 'user_address');
@@ -275,7 +284,7 @@ class OrderController extends Controller
 
     public function getOrderBySeller(){
         $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')
-        ->whereHas('order', function (Builder $query) {
+        /*->whereHas('order', function (Builder $query) {
             $id_order_status_pending = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_PENDING'])->pluck('id_order_status')->first();
 
             if(!isset($id_order_status_pending)){
@@ -286,7 +295,7 @@ class OrderController extends Controller
             }
 
             $query->where('id_order_status', '=', $id_order_status_pending);
-            })->orderBy('create_date', 'desc')->get();
+            })->orderBy('create_date', 'desc')*/->get();
 
         return $ordenes;
     }
