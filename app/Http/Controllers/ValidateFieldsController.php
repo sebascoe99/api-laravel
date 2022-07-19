@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OrderDetail;
+use App\Models\OrderStatus;
 use App\Models\Producto;
 use App\Models\Promotion;
 use App\Models\User;
@@ -258,6 +260,62 @@ class ValidateFieldsController extends Controller
             ]);
         }
 
+    }
+
+    public function validateAdrresInOrderPending(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_address' => 'required|numeric|min:0|not_in:0',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+
+        $where = ['id_address' => $request->id_address];
+        $response = OrderDetail::where($where)->get();
+        $count = $response->count();
+        
+        if($count > 0){
+
+            $id_order_status_pending = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_PENDING'])->pluck('id_order_status')->first();
+
+            $where2 = ['order_status.id_order_status' => $id_order_status_pending,
+                      'order_detail.id_order_detail' => $response['0']['id_order_detail']];
+
+            $data = OrderStatus::select('*')
+                ->join('order', 'order_status.id_order_status', '=', 'order.id_order_status')
+                ->join('order_order_detail', 'order.id_order', '=', 'order_order_detail.id_order')
+                ->join('order_detail', 'order_order_detail.id_order_detail', '=', 'order_detail.id_order_detail')
+                ->where($where2)
+                ->get();
+
+            $count2 = $data->count();
+
+            if($count2 > 0){
+                return response()->json([
+                    'message' => 'existe',
+                    'status' => $_ENV['CODE_STATUS_OK']
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'no existe',
+            'status' => $_ENV['CODE_STATUS_OK']
+        ]);
     }
 
 }

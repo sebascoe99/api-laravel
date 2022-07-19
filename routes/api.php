@@ -128,6 +128,7 @@ Route::post('/validate/user/email', [ValidateFieldsController::class, 'validateU
 Route::post('/validate/user/identification', [ValidateFieldsController::class, 'validateUserIdentification']);
 Route::post('/validate/user/password', [ValidateFieldsController::class, 'validateUserPassword']);
 Route::post('/validate/promotion/product', [ValidateFieldsController::class, 'validateProductInPromotion']);
+Route::post('/validate/address/order', [ValidateFieldsController::class, 'validateAdrresInOrderPending']);
 
 // Rutas para el controlador ShoppingCartController
 Route::post('/shopping/card/get', [ShoppingCartController::class, 'getProductCardByIdUser']);
