@@ -284,32 +284,17 @@ class ValidateFieldsController extends Controller
             ]);
         }
 
-        $where = ['id_address' => $request->id_address];
-        $response = OrderDetail::where($where)->get();
-        $count = $response->count();
-        
-        if($count > 0){
+        $query = DB::select("select * from `order_detail`
+        inner join `order_order_detail` on `order_detail`.`id_order_detail` = `order_order_detail`.`id_order_detail`
+        inner join `order` on `order_order_detail`.`id_order` = `order`.`id_order`
+        inner join `order_status` on `order`.`id_order_status` = `order_status`.`id_order_status`
+        where `order_detail`.`id_address` = $request->id_address and `order_status`.`id_order_status` = 1;");
 
-            $id_order_status_pending = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_PENDING'])->pluck('id_order_status')->first();
-
-            $where2 = ['order_status.id_order_status' => $id_order_status_pending,
-                      'order_detail.id_order_detail' => $response['0']['id_order_detail']];
-
-            $data = OrderStatus::select('*')
-                ->join('order', 'order_status.id_order_status', '=', 'order.id_order_status')
-                ->join('order_order_detail', 'order.id_order', '=', 'order_order_detail.id_order')
-                ->join('order_detail', 'order_order_detail.id_order_detail', '=', 'order_detail.id_order_detail')
-                ->where($where2)
-                ->get();
-
-            $count2 = $data->count();
-
-            if($count2 > 0){
-                return response()->json([
-                    'message' => 'existe',
-                    'status' => $_ENV['CODE_STATUS_OK']
-                ]);
-            }
+        if(! empty($query)){
+            return response()->json([
+                'message' => 'existe',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
         }
 
         return response()->json([
