@@ -71,12 +71,12 @@ class PromotionController extends Controller
 
         DB::enableQueryLog();
         $promocion =  new Promotion();
-        //$producto = Producto::where('id_product', $request->id_product)->first();
+        $producto = Producto::where('id_product', $request->id_product)->first();
 
         if(isset($request->promotion_description))
             $promocion->promotion_description  = $request->promotion_description;
 
-        $promocion->id_product = $request->id_product;
+        $promocion->id_product = $producto->id_product;
         $promocion->promotion_discount = $request->promotion_discount;
         $promocion->promotion_date_start = $request->promotion_date_start;
         $promocion->promotion_date_of_expiry = $request->promotion_date_of_expiry;
@@ -85,7 +85,7 @@ class PromotionController extends Controller
 
         if(isset($promocion->id_promotion)){
 
-            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->get();
+            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->where('promotion_status', $_ENV['STATUS_OFF'])->get();
             if(count($existeProducto) >= 1){
                 $precioProducto = round(Producto::where('id_product', $request->id_product)->pluck('product_price')->first(), 2);
                 $precioConDescuento = round($precioProducto * $request->promotion_discount, 2);
@@ -177,12 +177,12 @@ class PromotionController extends Controller
 
         DB::enableQueryLog();
         $promocion = Promotion::where('id_promotion', $request->id)->first();
-        //$producto = Producto::where('id_product', $request->id_product)->first();
+        $producto = Producto::where('id_product', $request->id_product)->first();
 
         if(isset($request->promotion_description))
             $promocion->promotion_description = $request->promotion_description;
 
-        $promocion->id_product = $request->id_product;
+        $promocion->id_product = $producto->id_product;
         $promocion->promotion_discount = $request->promotion_discount;
         $promocion->promotion_date_start  = $request->promotion_date_start;
         $promocion->promotion_date_of_expiry  = $request->promotion_date_of_expiry;
@@ -191,7 +191,7 @@ class PromotionController extends Controller
 
         if(isset($promocion->id_promotion)){
 
-            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->get();
+            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->where('promotion_status', $_ENV['STATUS_OFF'])->get();
             if(count($existeProducto) >= 1){
                 $precioProducto = round(Producto::where('id_product', $request->id_product)->pluck('product_price')->first(), 2);
                 $precioConDescuento = round($precioProducto * $request->promotion_discount, 2);
@@ -200,7 +200,7 @@ class PromotionController extends Controller
                 ->update(['product_offered_price_total' => $precioConDescuento,
                           'product_offered' => $request->promotion_discount]);
             }
-            
+
             foreach (DB::getQueryLog() as $q) {
                 $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
             }
