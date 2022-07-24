@@ -63,7 +63,8 @@ class ProductoController extends Controller
                 'product_description' => 'required',
                 'product_price' => 'required',
                 'product_status' => 'required',
-                'product_rating' => 'required'
+                'product_rating' => 'required',
+                'product_iva' => 'required|numeric|min:0|not_in:0'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -107,6 +108,7 @@ class ProductoController extends Controller
         $producto->product_image = $url;
         $producto->product_status = intval($request->product_status);
         $producto->product_rating = intval($request->product_rating);
+        $producto->product_iva = $request->product_iva;
         $producto->save();
 
         if(isset($producto->id_product)){
@@ -185,7 +187,8 @@ class ProductoController extends Controller
                 'product_description' => 'required',
                 'product_price' => 'required',
                 'product_status' => 'required',
-                'product_rating' => 'required'
+                'product_rating' => 'required',
+                'product_iva' => 'required|numeric|min:0|not_in:0'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -235,6 +238,7 @@ class ProductoController extends Controller
         $producto->product_image = $url;
         $producto->product_status = intval($request->product_status);
         $producto->product_rating = intval($request->product_rating);
+        $producto->product_iva = $request->product_iva;
         if($producto->save()){
             if($producto->product_stock > $stock_antiguo){
                 $inventario = new InventaryI();
