@@ -11,6 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentificationTypeController;
 use App\Http\Controllers\InventaryEController;
 use App\Http\Controllers\InventaryIController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductoUnitController;
 use App\Http\Controllers\PromotionController;
@@ -153,5 +154,7 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:3,
 Route::post('/logout/{id}', [AuthController::class, 'logout']);
 Route::post('/userinfo', [AuthController::class, 'infouser'])->middleware('auth:sanctum');
 
+//Enviar correo de Orden realizada
+Route::get('/send-email', [MailController::class, 'sendEmail']);
 
 

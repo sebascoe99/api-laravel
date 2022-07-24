@@ -64,7 +64,7 @@ class ProductoController extends Controller
                 'product_price' => 'required',
                 'product_status' => 'required',
                 'product_rating' => 'required',
-                'product_iva' => 'required|numeric|min:0'
+                'product_iva' => 'required|numeric'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -188,7 +188,7 @@ class ProductoController extends Controller
                 'product_price' => 'required',
                 'product_status' => 'required',
                 'product_rating' => 'required',
-                'product_iva' => 'required|numeric|min:0'
+                'product_iva' => 'required|numeric'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
