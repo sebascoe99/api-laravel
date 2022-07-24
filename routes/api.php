@@ -11,6 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IdentificationTypeController;
 use App\Http\Controllers\InventaryEController;
 use App\Http\Controllers\InventaryIController;
+use App\Http\Controllers\IvaController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductoUnitController;
@@ -143,6 +144,11 @@ Route::post('/address', [AddressController::class, 'store']);
 Route::put('/address/{id}', [AddressController::class, 'update']); //actualizar una promoción
 Route::delete('/address/{id}', [AddressController::class, 'destroy']); //eliminar un promoción
 Route::post('/address/getById/{id}', [AddressController::class, 'getAdrressById']);
+
+// Rutas para el controlador IvaController
+Route::get('/iva', [IvaController::class, 'index']); //mostrar iva
+Route::put('/iva/{id}', [IvaController::class, 'update']); //actualizar el iva
+
 //
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -116,7 +116,7 @@ class AddressController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'user_address' => 'required',
+                'user_address' => 'required|numeric|min:0|not_in:0',
                 'address_description' => 'required'
             ],
             [
