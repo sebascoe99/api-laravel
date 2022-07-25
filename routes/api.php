@@ -160,7 +160,8 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:3,
 Route::post('/logout/{id}', [AuthController::class, 'logout']);
 Route::post('/userinfo', [AuthController::class, 'infouser'])->middleware('auth:sanctum');
 
-//Enviar correo de Orden realizada
-Route::get('/send-email', [MailController::class, 'sendEmail']);
+
+Route::get('/send-email', [MailController::class, 'sendEmail']);//Enviar correo de Orden realizada
+Route::get('/contact', [MailController::class, 'contactUs']);//Enviar correo de Orden realizada
 
 
