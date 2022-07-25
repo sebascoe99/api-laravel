@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Audit;
 use App\Models\Iva;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -78,7 +79,8 @@ class IvaController extends Controller
                 'porcent' => 'required',
                 'undefined_date' => 'required',
                 'date_start' => 'required',
-                'date_end' => 'required'
+                'date_end' => 'required',
+                'id_user' => 'required'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -96,7 +98,7 @@ class IvaController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
         }
-        //DB::enableQueryLog();
+        DB::enableQueryLog();
         $iva = Iva::find($request->id);
         $iva->porcent = $request->porcent;
         $iva->undefined_date = $request->undefined_date;
@@ -104,6 +106,18 @@ class IvaController extends Controller
         $iva->date_end = $request->date_end;
 
         if($iva->save()){
+
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['AUDIT_ACTION_ACTUALIZACION'];
+            $audit->audit_description = 'Se actualizó el iva con porcentaje ' . $iva->porcent . '%';
+            $audit->audit_module = $_ENV['AUDIT_MODULE_IVA'];
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
             return response()->json([
                 'message' => 'Iva actualizado con éxito',
                 'status' => $_ENV['CODE_STATUS_OK']
