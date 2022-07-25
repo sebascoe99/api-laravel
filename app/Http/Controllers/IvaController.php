@@ -97,7 +97,6 @@ class IvaController extends Controller
         }
         $iva = Iva::findOrFail($request->id);//Se obtiene el objeto address por el id
         $iva->porcent = $request->porcent;
-        $iva->address_description  = $request->address_description;
         $iva->undefined_date = $request->undefined_date;
         $iva->date_start = $request->date_start;
         $iva->date_end = $request->date_end;
