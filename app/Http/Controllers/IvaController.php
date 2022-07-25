@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Iva;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class IvaController extends Controller
 {
@@ -69,12 +71,11 @@ class IvaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_iva' => 'required|numeric|min:0|not_in:0',
-                'porcent' => 'required|numeric',
+                'porcent' => 'required',
                 'undefined_date' => 'required',
                 'date_start' => 'required',
                 'date_end' => 'required'
@@ -95,7 +96,8 @@ class IvaController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
         }
-        $iva = Iva::findOrFail($request->id);//Se obtiene el objeto address por el id
+        //DB::enableQueryLog();
+        $iva = Iva::find($request->id);
         $iva->porcent = $request->porcent;
         $iva->undefined_date = $request->undefined_date;
         $iva->date_start = $request->date_start;
