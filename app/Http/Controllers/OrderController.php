@@ -337,9 +337,22 @@ class OrderController extends Controller
         $orden = Order::find($request->id_order);
         $orden->id_order_status = $id_order_status_completed;
         if($orden->save()){
+            
+        $result = DB::select("select TIMESTAMPDIFF(DAY, TIMESTAMP(create_date), updated_at) AS days,
+        MOD(TIMESTAMPDIFF(HOUR, TIMESTAMP(create_date), updated_at), 24) AS hours,
+        MOD(TIMESTAMPDIFF(MINUTE, TIMESTAMP(create_date), updated_at), 60) AS minutes
+        from `order`
+        where `order`.`id_order` = $orden->id_order ;");
+
+        $result = $result['0'];
             return response()->json([
                 'message' => 'Orden completada',
-                'status' => $_ENV['CODE_STATUS_OK']
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'tiempo_despacho' => [
+                    'dias' => $result->days,
+                    'horas' => $result->hours,
+                    'minutos' => $result->minutes
+                ]
             ]);
         }else{
             return response()->json([
