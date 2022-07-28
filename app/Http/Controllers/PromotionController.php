@@ -151,12 +151,12 @@ class PromotionController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required|numeric|min:0|not_in:0',
-                'id_product' => 'required|numeric|min:0|not_in:0',
-                'promotion_discount' => 'required|numeric|min:0|not_in:0',
-                'promotion_date_start' => 'required',
-                'promotion_date_of_expiry' => 'required',
-                'promotion_status' => 'required|numeric|min:0'
+                    'id_user' => 'required|numeric|min:0|not_in:0',
+                    'id_product' => 'required|numeric|min:0|not_in:0',
+                    'promotion_discount' => 'required|numeric|min:0|not_in:0',
+                    'promotion_date_start' => 'required',
+                    'promotion_date_of_expiry' => 'required',
+                    'promotion_status' => 'required|numeric|min:0'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
