@@ -303,4 +303,50 @@ class ValidateFieldsController extends Controller
         ]);
     }
 
+    public function validateProductHasStock(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_product' => 'required|numeric|min:0|not_in:0',
+                'quantity' => 'required'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+        $existeProducto = Producto::where('id_product', $request->id_product)->get();
+        if(count($existeProducto) >= 1){
+            $product_stock = Producto::where('id_product', $request->id_product)->pluck('product_stock')->first();
+            if($product_stock >= $request->quantity){
+                return response()->json([
+                    'message' => 'Stock disponible',
+                    'status' => $_ENV['CODE_STATUS_OK'],
+                    'product_stock' => $product_stock
+                ]);
+            }else{
+                return response()->json([
+                    'message' => 'Stock no disponible',
+                    'status' => $_ENV['CODE_STATUS_OK'],
+                    'product_stock' => $product_stock
+                ]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Producto no existe',
+            'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+        ]);
+    }
+
 }
