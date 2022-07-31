@@ -85,7 +85,7 @@ class PromotionController extends Controller
 
         if(isset($promocion->id_promotion)){
 
-            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->where('promotion_status', $_ENV['STATUS_OFF'])->get();
+            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->where('shopping_cart_status', $_ENV['STATUS_ON'])->get();
             if(count($existeProducto) >= 1){
                 $precioProducto = round(Producto::where('id_product', $request->id_product)->pluck('product_price')->first(), 2);
                 $precioConDescuento = round($precioProducto * $request->promotion_discount, 2);
@@ -191,7 +191,7 @@ class PromotionController extends Controller
 
         if(isset($promocion->id_promotion)){
 
-            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->where('promotion_status', $_ENV['STATUS_OFF'])->get();
+            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->where('shopping_cart_status', $_ENV['STATUS_ON'])->get();
             if(count($existeProducto) >= 1){
                 $precioProducto = round(Producto::where('id_product', $request->id_product)->pluck('product_price')->first(), 2);
                 $precioConDescuento = round($precioProducto * $request->promotion_discount, 2);
