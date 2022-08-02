@@ -327,18 +327,20 @@ class ValidateFieldsController extends Controller
         }
         $existeProducto = Producto::where('id_product', $request->id_product)->get();
         if(count($existeProducto) >= 1){
-            $product_stock = Producto::where('id_product', $request->id_product)->pluck('product_stock')->first();
-            if($product_stock >= $request->quantity){
+            $product = Producto::where('id_product', $request->id_product)->first(['product_stock', 'product_name']);
+            if($product->product_stock >= $request->quantity){
                 return response()->json([
                     'message' => 'Stock disponible',
                     'status' => $_ENV['CODE_STATUS_OK'],
-                    'product_stock' => $product_stock
+                    'product_stock' => $product->product_stock,
+                    'product_name' => $product->product_name
                 ]);
             }else{
                 return response()->json([
                     'message' => 'Stock no disponible',
                     'status' => $_ENV['CODE_STATUS_OK'],
-                    'product_stock' => $product_stock
+                    'product_stock' => $product->product_stock,
+                    'product_name' => $product->product_name
                 ]);
             }
         }
