@@ -190,17 +190,6 @@ class PromotionController extends Controller
         $promocion->save();
 
         if(isset($promocion->id_promotion)){
-
-            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->where('shopping_cart_status', $_ENV['STATUS_ON'])->get();
-            if(count($existeProducto) >= 1){
-                $precioProducto = round(Producto::where('id_product', $request->id_product)->pluck('product_price')->first(), 2);
-                $precioConDescuento = round($precioProducto * $request->promotion_discount, 2);
-
-                $actualizar = ShoppingCart::where('id_product', $request->id_product)
-                ->update(['product_offered_price_total' => $precioConDescuento,
-                          'product_offered' => $request->promotion_discount]);
-            }
-
             foreach (DB::getQueryLog() as $q) {
                 $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
             }
@@ -211,6 +200,16 @@ class PromotionController extends Controller
             $audit->audit_module = $_ENV['AUDIT_MODULE_PROMOTION'];
             $audit->audit_query = $queryStr;
             $audit->save();
+
+            $existeProducto = ShoppingCart::where('id_product', $request->id_product)->where('shopping_cart_status', $_ENV['STATUS_ON'])->get();
+            if(count($existeProducto) >= 1){
+                $precioProducto = round(Producto::where('id_product', $request->id_product)->pluck('product_price')->first(), 2);
+                $precioConDescuento = round($precioProducto * $request->promotion_discount, 2);
+
+                $actualizar = ShoppingCart::where('id_product', $request->id_product)
+                ->update(['product_offered_price_total' => $precioConDescuento,
+                          'product_offered' => $request->promotion_discount]);
+            }
 
             return response()->json([
                 'message' => 'Promoción actualizada con exito',
@@ -269,6 +268,14 @@ class PromotionController extends Controller
             $audit->audit_module = $_ENV['AUDIT_MODULE_PROMOTION'];
             $audit->audit_query = $queryStr;
             $audit->save();
+
+            $existeProducto = ShoppingCart::where('id_product', $promocion->id_product)->where('shopping_cart_status', $_ENV['STATUS_ON'])->get();
+            if(count($existeProducto) >= 1){
+
+                $actualizar = ShoppingCart::where('id_product', $promocion->id_product)
+                ->update(['product_offered_price_total' => 0,
+                          'product_offered' => 0]);
+            }
 
             return response()->json([
                 'message' => 'Eliminado correctamente',
