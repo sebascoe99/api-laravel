@@ -251,7 +251,8 @@ class ValidateFieldsController extends Controller
         if(isset($producto_promocion)){
             return response()->json([
                 'message' => "Tiene promocion",
-                'status' => $_ENV['CODE_STATUS_OK']
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'promotion_discount' => $producto_promocion->promotion_discount
             ]);
         }else{
             return response()->json([

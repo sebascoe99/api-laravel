@@ -272,7 +272,7 @@ class PromotionController extends Controller
             $existeProducto = ShoppingCart::where('id_product', $promocion->id_product)->where('shopping_cart_status', $_ENV['STATUS_ON'])->get();
             if(count($existeProducto) >= 1){
 
-                $actualizar = ShoppingCart::where('id_product', $promocion->id_product)
+                $actualizar = ShoppingCart::where('id_product', $promocion->id_product)->where('shopping_cart_status', $_ENV['STATUS_ON'])
                 ->update(['product_offered_price_total' => 0,
                           'product_offered' => 0]);
             }
