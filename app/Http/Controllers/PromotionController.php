@@ -273,8 +273,8 @@ class PromotionController extends Controller
             if(count($existeProducto) >= 1){
 
                 $actualizar = ShoppingCart::where('id_product', $promocion->id_product)->where('shopping_cart_status', $_ENV['STATUS_ON'])
-                ->update(['product_offered_price_total' => 0,
-                          'product_offered' => 0]);
+                ->update(['product_offered_price_total' => null,
+                          'product_offered' => null]);
             }
 
             return response()->json([

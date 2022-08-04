@@ -40,7 +40,45 @@ class IvaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0',
+                'porcent' => 'required'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+        $actualizar = Iva::where('iva_status', $_ENV['STATUS_ON'])
+                    ->update(['iva_status' => $_ENV['STATUS_OFF']]);
+
+        $iva = new Iva();
+        $iva->id_user = $request->id_user;
+        $iva->porcent = $request->porcent;
+        $iva->iva_status = $_ENV['STATUS_ON'];
+
+        if($iva->save()){
+            return response()->json([
+                'message' => 'Iva guardado exitosamente',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }
+        return response()->json([
+            'message' => 'Ocurrio un error interno en el servidor',
+            'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+        ]);
     }
 
     /**

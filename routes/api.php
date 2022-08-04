@@ -149,6 +149,7 @@ Route::post('/address/getById/{id}', [AddressController::class, 'getAdrressById'
 // Rutas para el controlador IvaController
 Route::get('/iva', [IvaController::class, 'index']); //mostrar iva
 Route::put('/iva/{id}', [IvaController::class, 'update']); //actualizar el iva
+Route::post('/iva', [IvaController::class, 'store']); //actualizar el iva
 
 //
 
