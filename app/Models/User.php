@@ -80,4 +80,8 @@ class User extends Authenticatable
     public function addresses(){
         return $this->hasMany(Address::class, 'id_address');
     }
+
+    public function purchase_order(){
+        return $this->hasOne(PurchaseOrder::class, 'id_purchase_order');
+    }
 }

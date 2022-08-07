@@ -60,6 +60,10 @@ class Producto extends Model
         return $this->hasOne(ShoppingCart::class, 'id_shopping_cart');
     }
 
+    public function purchase_order_products(){
+        return $this->belongsTo(PurchaseOrderProducts::class, 'id_purchase_order_products');
+    }
+
     use HasFactory;
     /*protected $fillable = ['product_code','product_description', 'product_stock_minimum', 'product_price',
                             'product_image', 'product_status', 'product_rating'];*/

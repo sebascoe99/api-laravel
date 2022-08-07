@@ -16,6 +16,7 @@ use App\Http\Controllers\MailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductoUnitController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\ShoppingCartController;
 use App\Http\Controllers\TypeProviderController;
 use App\Http\Controllers\UserController;
@@ -149,7 +150,11 @@ Route::post('/address/getById/{id}', [AddressController::class, 'getAdrressById'
 // Rutas para el controlador IvaController
 Route::get('/iva', [IvaController::class, 'index']); //mostrar iva
 Route::put('/iva/{id}', [IvaController::class, 'update']); //actualizar el iva
-Route::post('/iva', [IvaController::class, 'store']); //actualizar el iva
+Route::post('/iva', [IvaController::class, 'store']); //crear iva
+
+// Rutas para el controlador PurchaseOrderController
+Route::get('/purchase/order', [PurchaseOrderController::class, 'index']); //mostrar ordenes compra
+Route::post('/purchase/order', [PurchaseOrderController::class, 'store']); //crear orden de compra
 
 //
 

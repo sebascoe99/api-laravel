@@ -31,4 +31,8 @@ class Provider extends Model
     public function identification_type(){
         return $this->hasOne(IdentificationType::class, 'id_identification_type');
     }
+
+    public function purchase_order(){
+        return $this->hasOne(PurchaseOrder::class, 'id_purchase_order');
+    }
 }
