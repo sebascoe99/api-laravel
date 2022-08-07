@@ -345,6 +345,13 @@ class OrderController extends Controller
         where `order`.`id_order` = $orden->id_order ;");
 
         $result = $result['0'];
+
+        $orden = Order::find($request->id_order);
+        $orden->delivery_day = $result->days;
+        $orden->delivery_hour = $result->hours;
+        $orden->delivery_minute = $result->minutes;
+        $orden->save();
+
             return response()->json([
                 'message' => 'Orden completada',
                 'status' => $_ENV['CODE_STATUS_OK'],
