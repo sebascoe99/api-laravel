@@ -26,4 +26,8 @@ class PurchaseOrder extends Model
     public function user(){
         return $this->belongsTo(User::class, 'id_user');
     }
+
+    public function PurchaseOrderProductos(){
+        return $this->hasMany(PurchaseOrderProducts::class, 'id_purchase_order');
+    }
 }

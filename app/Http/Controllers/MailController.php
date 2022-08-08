@@ -70,7 +70,8 @@ class MailController extends Controller
         }
 
         $details = [
-            'title' => 'Mensaje de ' .$request->nombres. ' con correo ' .$request->email,
+            'fullname' => $request->nombres,
+            'email' => $request->email,
             'body' => $request->comentario
         ];
 

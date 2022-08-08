@@ -19,8 +19,12 @@ class PurchaseOrderProducts extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s'
     ];
 
-    public function productos(){
-        return $this->hasMany(Producto::class);
+    public function producto(){
+        return $this->belongsTo(Producto::class, 'id_product');
+    }
+
+    public function PurchaseOrder(){
+        return $this->belongsTo(PurchaseOrder::class, 'id_purchase_order');
     }
 
 }

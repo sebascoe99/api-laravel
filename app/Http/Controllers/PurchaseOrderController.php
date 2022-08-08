@@ -20,7 +20,8 @@ class PurchaseOrderController extends Controller
      */
     public function index()
     {
-        $ordenes_compra = PurchaseOrder::with('provider', 'user')->orderBy('create_date', 'desc')->get();
+        $ordenes_compra = PurchaseOrder::with('provider', 'user', 'PurchaseOrderProductos', 'PurchaseOrderProductos.producto')
+        ->orderBy('create_date', 'desc')->get();
         return $ordenes_compra;
     }
 

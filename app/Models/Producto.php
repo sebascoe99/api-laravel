@@ -61,7 +61,7 @@ class Producto extends Model
     }
 
     public function purchase_order_products(){
-        return $this->belongsTo(PurchaseOrderProducts::class, 'id_purchase_order_products');
+        return $this->hasOne(PurchaseOrderProducts::class, 'id_purchase_order_products');
     }
 
     use HasFactory;
