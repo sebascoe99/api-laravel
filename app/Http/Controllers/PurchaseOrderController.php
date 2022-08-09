@@ -226,7 +226,7 @@ class PurchaseOrderController extends Controller
             $audit->save();
 
             return response()->json([
-                'message' => 'Orden de compra creada con exito',
+                'message' => 'Orden de compra completada con exito',
                 'status' => $_ENV['CODE_STATUS_OK']
             ]);
         }else{
