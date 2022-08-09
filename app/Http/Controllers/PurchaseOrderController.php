@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Audit;
+use App\Models\Producto;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderProducts;
 use App\Models\User;
@@ -72,11 +73,9 @@ class PurchaseOrderController extends Controller
         DB::enableQueryLog();
         $purchase_order = new PurchaseOrder();
         $user = User::where('id_user', $request->id_user)->first();
-
         $purchase_order->id_provider = $request->id_provider;
         $purchase_order->id_user = $request->id_user;
         $purchase_order->purchase_order_status = $_ENV['STATUS_ON'];
-        //$purchase_order->purchase_order_total = $request->purchase_order_total;
         $purchase_order->save();
 
         if(isset($purchase_order->id_purchase_order)){
@@ -88,7 +87,7 @@ class PurchaseOrderController extends Controller
             $audit->id_user = intval($request->id_user);
             $audit->audit_action = $_ENV['AUDIT_ACTION_INSERCION'];
             $audit->audit_description = $user->user_name.' '.$user->user_lastName.' '.' agregó nueva orden de compra.';
-            $audit->audit_module = $_ENV['AUDIT_MODULE_PROMOTION'];
+            $audit->audit_module = 'ORDEN_COMPRA';
             $audit->audit_query = $queryStr;
             $audit->save();
 
@@ -96,7 +95,7 @@ class PurchaseOrderController extends Controller
                 $purchase_order_products = new PurchaseOrderProducts();
                 $purchase_order_products->id_product = $producto['id_product'];
                 $purchase_order_products->id_purchase_order = $purchase_order->id_purchase_order;
-                $purchase_order_products->purchase_order_products_status = $_ENV['STATUS_ON'];
+                $purchase_order_products->purchase_order_products_status = $_ENV['STATUS_OFF'];
                 $purchase_order_products->purchase_order_products_amount = $producto['amount'];
                 $purchase_order_products->save();
             }
@@ -156,5 +155,85 @@ class PurchaseOrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function confirmateProductsPurchaseOrder(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_purchase_order' => 'required|numeric|min:0|not_in:0',
+                'id_user' => 'required|numeric|min:0|not_in:0',
+                'purchase_order_total' => 'required',
+                'tipe_of_pay' => 'required',
+                'products' => 'required',
+                'products.*.id_purchase_order_products' => 'required',
+                'products.*.id_product' => 'required',
+                'products.*.purchase_order_products_status' => 'required',
+                'products.*.purchase_order_products_amount' => 'required'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+                ]);
+        }
+
+        $purchase_order = PurchaseOrder::where('id_purchase_order', $request->id_purchase_order)->first();
+
+        foreach ($request->products as $pro) {
+            $purchase_order_products = PurchaseOrderProducts::where('id_purchase_order_products', $pro['id_purchase_order_products'])->first();
+
+            if($pro['id_purchase_order_products_status'] == 1){
+
+                $purchase_order_products->purchase_order_products_amount = $pro['purchase_order_products_amount'];
+                if($purchase_order_products->save()){
+                    $producto = Producto::where('id_product', $pro['id_product'])->first();
+                    $producto->product_stock = ($producto->product_stock + $pro['purchase_order_products_amount']);
+                    $producto->save();
+                }
+            }else{
+                $purchase_order_products->id_purchase_order_products_status == $_ENV['STATUS_OFF'];
+                $purchase_order_products->save();
+            }
+        }
+
+        $purchase_order->purchase_order_status = $_ENV['STATUS_ON'];
+        $purchase_order->purchase_order_total = $request->purchase_order_total;
+        $purchase_order->tipe_of_pay = $request->tipe_of_pay;
+        $user = User::where('id_user', $request->id_user)->first();
+
+        DB::enableQueryLog();
+        if($purchase_order->save()){
+
+            foreach (DB::getQueryLog() as $q) {
+                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
+            }
+            $audit =  new Audit();
+            $audit->id_user = intval($request->id_user);
+            $audit->audit_action = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
+            $audit->audit_description = $user->user_name.' '.$user->user_lastName.' '.' confirmo la orden de compra con id '.$purchase_order->id_purchase_order;
+            $audit->audit_module = 'ORDEN_COMPRA';
+            $audit->audit_query = $queryStr;
+            $audit->save();
+
+            return response()->json([
+                'message' => 'Orden de compra creada con exito',
+                'status' => $_ENV['CODE_STATUS_OK']
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'Ocurrio un error interno en el servidor',
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
     }
 }
