@@ -152,6 +152,7 @@ Route::get('/iva', [IvaController::class, 'index']); //mostrar iva
 Route::put('/iva/{id}', [IvaController::class, 'update']); //actualizar el iva
 Route::post('/iva', [IvaController::class, 'store']); //crear iva
 
+
 // Rutas para el controlador PurchaseOrderController
 Route::get('/purchase/order', [PurchaseOrderController::class, 'index']); //mostrar ordenes compra
 Route::post('/purchase/order', [PurchaseOrderController::class, 'store']); //crear orden de compra
