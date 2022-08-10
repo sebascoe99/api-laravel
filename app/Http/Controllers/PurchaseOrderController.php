@@ -94,7 +94,7 @@ class PurchaseOrderController extends Controller
                 $purchase_order_products = new PurchaseOrderProducts();
                 $purchase_order_products->id_product = $producto['id_product'];
                 $purchase_order_products->id_purchase_order = $purchase_order->id_purchase_order;
-                $purchase_order_products->purchase_order_products_status = $_ENV['STATUS_OFF'];
+                $purchase_order_products->purchase_order_products_status = $_ENV['STATUS_ON'];
                 $purchase_order_products->purchase_order_products_amount = $producto['amount'];
                 $purchase_order_products->save();
             }
