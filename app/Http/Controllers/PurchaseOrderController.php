@@ -192,7 +192,7 @@ class PurchaseOrderController extends Controller
         foreach ($request->products as $pro) {
             $purchase_order_products = PurchaseOrderProducts::where('id_purchase_order_products', $pro['id_purchase_order_products'])->first();
 
-            if($pro['id_purchase_order_products_status'] == 1){
+            if($pro['purchase_order_products_status'] == 1){
 
                 $purchase_order_products->purchase_order_products_amount = $pro['purchase_order_products_amount'];
                 if($purchase_order_products->save()){
