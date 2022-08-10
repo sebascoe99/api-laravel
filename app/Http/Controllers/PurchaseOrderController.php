@@ -48,7 +48,6 @@ class PurchaseOrderController extends Controller
             $validator = Validator::make($request->all(), [
                 'id_provider' => 'required|numeric|min:0|not_in:0',
                 'id_user' => 'required|numeric|min:0|not_in:0',
-                //'purchase_order_total' => 'required',
                 'products' => 'required',
                 'products.*.id_product' => 'required',
                 'products.*.amount' => 'required',
@@ -75,7 +74,7 @@ class PurchaseOrderController extends Controller
         $user = User::where('id_user', $request->id_user)->first();
         $purchase_order->id_provider = $request->id_provider;
         $purchase_order->id_user = $request->id_user;
-        $purchase_order->purchase_order_status = $_ENV['STATUS_ON'];
+        $purchase_order->purchase_order_status = $_ENV['STATUS_OFF'];
         $purchase_order->save();
 
         if(isset($purchase_order->id_purchase_order)){
