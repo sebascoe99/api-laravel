@@ -18,7 +18,7 @@ class IvaController extends Controller
      */
     public function index()
     {
-        $iva = Iva::orderBy('create_date', 'asc')->get();
+        $iva = Iva::orderBy('create_date', 'desc')->get();
         return $iva;
     }
 
