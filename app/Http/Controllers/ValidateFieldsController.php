@@ -6,6 +6,7 @@ use App\Models\OrderDetail;
 use App\Models\OrderStatus;
 use App\Models\Producto;
 use App\Models\Promotion;
+use App\Models\Provider;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -350,6 +351,80 @@ class ValidateFieldsController extends Controller
             'message' => 'Producto no existe',
             'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
         ]);
+    }
+
+    public function validateProviderNameExist(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'provider_name' => 'required',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+
+        $existeNombreProveedor = Provider::where('provider_name', $request->provider_name)->get();
+
+        if(count($existeNombreProveedor) >= 1){
+            return response()->json([
+                'message' => 'existe',
+                'status' => $_ENV['CODE_STATUS_OK'],
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'no existe',
+                'status' => $_ENV['CODE_STATUS_OK'],
+            ]);
+        }
+    }
+
+    public function validateProviderIdentificationExist(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'provider_identification' => 'required',
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+
+        $existeIdentificacionProveedor = Provider::where('provider_identification', $request->provider_identification)->get();
+
+        if(count($existeIdentificacionProveedor) >= 1){
+            return response()->json([
+                'message' => 'existe',
+                'status' => $_ENV['CODE_STATUS_OK'],
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'no existe',
+                'status' => $_ENV['CODE_STATUS_OK'],
+            ]);
+        }
     }
 
 }
