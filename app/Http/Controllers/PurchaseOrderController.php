@@ -163,6 +163,8 @@ class PurchaseOrderController extends Controller
                 'id_user' => 'required|numeric|min:0|not_in:0',
                 'purchase_order_total' => 'required',
                 'tipe_of_pay' => 'required',
+                'facture' => 'required',
+                'date_purchase' => 'required',
                 'products' => 'required',
                 'products.*.id_purchase_order_products' => 'required',
                 'products.*.id_product' => 'required',
@@ -208,6 +210,8 @@ class PurchaseOrderController extends Controller
         $purchase_order->purchase_order_status = $_ENV['STATUS_ON'];
         $purchase_order->purchase_order_total = $request->purchase_order_total;
         $purchase_order->tipe_of_pay = $request->tipe_of_pay;
+        $purchase_order->facture = $request->facture;
+        $purchase_order->date_purchase = $request->date_purchase;
         $user = User::where('id_user', $request->id_user)->first();
 
         DB::enableQueryLog();
