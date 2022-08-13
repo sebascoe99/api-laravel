@@ -458,7 +458,7 @@ class OrderController extends Controller
 
             $ordenesPendientes = Order::where('id_order_Status', $id_order_status_pending)
             ->whereBetween('updated_at', [$fecha_inicio, $fecha_fin])->get();
-            array_push($data, array ("id_order_Status" => $id_order_status_completed, "order_status_description" => $_ENV['ORDEN_PENDING'], "count"=> count($ordenesPendientes) ) );
+            array_push($data, array ("id_order_Status" => $id_order_status_pending, "order_status_description" => $_ENV['ORDEN_PENDING'], "count"=> count($ordenesPendientes) ) );
 
             return response()->json([
                 'message' => 'Consulta realizada con exito',
@@ -471,7 +471,7 @@ class OrderController extends Controller
         array_push($data, array ("id_order_Status" => $id_order_status_completed, "order_status_description" => $_ENV['ORDEN_COMPLETED'], "count"=> count($ordenesCompletadas) ) );
 
         $ordenesPendientes = Order::where('id_order_Status', $id_order_status_pending)->get();
-        array_push($data, array ("id_order_Status" => $id_order_status_completed, "order_status_description" => $_ENV['ORDEN_PENDING'], "count"=> count($ordenesPendientes) ) );
+        array_push($data, array ("id_order_Status" => $id_order_status_pending, "order_status_description" => $_ENV['ORDEN_PENDING'], "count"=> count($ordenesPendientes) ) );
 
         return response()->json([
             'message' => 'Consulta realizada con exito',
