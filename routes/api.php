@@ -51,6 +51,7 @@ Route::post('/products', [ProductoController::class, 'store']); //crear un produ
 Route::put('/products/{id}', [ProductoController::class, 'update']); //actualizar un producto
 Route::delete('/products/{id}', [ProductoController::class, 'destroy']); //eliminar un producto
 Route::post('/products/upload/excel', [ProductoController::class, 'uploadExcel']);
+Route::get('/products/by/category', [ProductoController::class, 'getAllProductsByCategory']);
 
 // Rutas para el controlador ProviderController
 Route::get('/providers', [ProviderController::class, 'index']); //mostrar todos los proveedores
@@ -122,6 +123,7 @@ Route::post('/order/user', [OrderController::class, 'getOrderByUser']);
 Route::get('/order/seller', [OrderController::class, 'getOrderBySeller']);
 Route::post('/order/change', [OrderController::class, 'changeStatusOrder']);
 Route::post('/sales/all', [OrderController::class, 'getAllSales']);
+Route::post('/orders/by/status', [OrderController::class, 'getAllOrdersByStatus']);
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes

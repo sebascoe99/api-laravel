@@ -596,4 +596,26 @@ class ProductoController extends Controller
         }
     }
 
+    public function getAllProductsByCategory(){
+        $categorias = Category::whereNotIn('category_descripcion', [$_ENV['NO_DEFINIDO']])->get();
+        
+        if(count($categorias) >= 1){
+            $data = [];
+            foreach($categorias as $categoria){
+                $productos = "";
+                $productos = Producto::where('id_category', $categoria->id_category)->get();
+                array_push($data, array ("id_category"=>$categoria->id_category, "category_name"=> $categoria->category_name, "products"=> count($productos) ) );
+            }
+            return response()->json([
+                'message' => 'Consulta realizada con exito',
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'data' => $data
+            ]);
+        }
+        return response()->json([
+            'message' => 'No existen categorias disponibles',
+            'status' => $_ENV['CODE_STATUS_ERROR_CREDENTIALS_CLIENT']
+        ]);
+    }
+
 }

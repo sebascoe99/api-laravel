@@ -426,9 +426,57 @@ class OrderController extends Controller
 
             $ventas = Order::where('id_order_Status', $id_order_status_completed)
             ->whereBetween('updated_at', [$fecha_inicio, $fecha_fin])->get();
-            return count($ventas);
+            return response()->json([
+                'message' => 'Consulta realizada con exito',
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'count' => count($ventas)
+            ]);
         }
         $ventas = Order::where('id_order_Status', $id_order_status_completed)->get();
-        return count($ventas);
+        return response()->json([
+            'message' => 'Consulta realizada con exito',
+            'status' => $_ENV['CODE_STATUS_OK'],
+            'count' => count($ventas)
+        ]);
+    }
+
+    public function getAllOrdersByStatus(Request $request){
+        $id_order_status_completed = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_COMPLETED'])->pluck('id_order_status')->first();
+        $id_order_status_pending = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_PENDING'])->pluck('id_order_status')->first();
+        $data = [];
+
+        if(isset($request->start_date) && isset($request->end_date)){
+
+            $fecha_inicio = new DateTime($request->start_date);
+            $fecha_inicio = $fecha_inicio->format('Y-m-d H:i:s');
+            $fecha_fin = new DateTime($request->end_date);
+            $fecha_fin = $fecha_fin->format('Y-m-d H:i:s');
+
+            $ordenesCompletadas = Order::where('id_order_Status', $id_order_status_completed)
+            ->whereBetween('updated_at', [$fecha_inicio, $fecha_fin])->get();
+            array_push($data, array ("id_order_Status" => $id_order_status_completed, "order_status_description" => $_ENV['ORDEN_COMPLETED'], "count"=> count($ordenesCompletadas) ) );
+
+            $ordenesPendientes = Order::where('id_order_Status', $id_order_status_pending)
+            ->whereBetween('updated_at', [$fecha_inicio, $fecha_fin])->get();
+            array_push($data, array ("id_order_Status" => $id_order_status_completed, "order_status_description" => $_ENV['ORDEN_PENDING'], "count"=> count($ordenesPendientes) ) );
+
+            return response()->json([
+                'message' => 'Consulta realizada con exito',
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'data' => $data
+            ]);
+        }
+
+        $ordenesCompletadas = Order::where('id_order_Status', $id_order_status_completed)->get();
+        array_push($data, array ("id_order_Status" => $id_order_status_completed, "order_status_description" => $_ENV['ORDEN_COMPLETED'], "count"=> count($ordenesCompletadas) ) );
+
+        $ordenesPendientes = Order::where('id_order_Status', $id_order_status_pending)->get();
+        array_push($data, array ("id_order_Status" => $id_order_status_completed, "order_status_description" => $_ENV['ORDEN_PENDING'], "count"=> count($ordenesPendientes) ) );
+
+        return response()->json([
+            'message' => 'Consulta realizada con exito',
+            'status' => $_ENV['CODE_STATUS_OK'],
+            'data' => $data
+        ]);
     }
 }
