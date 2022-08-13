@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\MailContact;
+use App\Mail\MailQuotation;
 use App\Mail\Mailte;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -79,6 +80,16 @@ class MailController extends Controller
 
         return response()->json([
             'message' => 'Correo recibido',
+            'status' => $_ENV['CODE_STATUS_OK']
+        ]);
+    }
+
+    public function sendEmailProvider($productos, $provider_email){
+
+        Mail::to($provider_email)->send(new MailQuotation($productos));
+
+        return response()->json([
+            'message' => 'Correo enviado',
             'status' => $_ENV['CODE_STATUS_OK']
         ]);
     }

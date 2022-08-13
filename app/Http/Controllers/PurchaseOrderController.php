@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Audit;
 use App\Models\Producto;
+use App\Models\Provider;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderProducts;
 use App\Models\User;
@@ -51,6 +52,7 @@ class PurchaseOrderController extends Controller
                 'products' => 'required',
                 'products.*.id_product' => 'required',
                 'products.*.amount' => 'required',
+                'products.*.product_name' => 'required'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
@@ -98,6 +100,10 @@ class PurchaseOrderController extends Controller
                 $purchase_order_products->purchase_order_products_amount = $producto['amount'];
                 $purchase_order_products->save();
             }
+
+            $proveedor = Provider::where('id_provider', $request->id_provider)->first();
+            $mainController = new MailController();
+            $mainController->sendEmailProvider($request->products, $proveedor->provider_email);
 
             return response()->json([
                 'message' => 'Orden de compra creada con exito',
