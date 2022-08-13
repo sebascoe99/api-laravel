@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use DateTime;
 
 class OrderController extends Controller
 {
@@ -337,7 +338,7 @@ class OrderController extends Controller
         $orden = Order::find($request->id_order);
         $orden->id_order_status = $id_order_status_completed;
         if($orden->save()){
-            
+
         $result = DB::select("select TIMESTAMPDIFF(DAY, TIMESTAMP(create_date), updated_at) AS days,
         MOD(TIMESTAMPDIFF(HOUR, TIMESTAMP(create_date), updated_at), 24) AS hours,
         MOD(TIMESTAMPDIFF(MINUTE, TIMESTAMP(create_date), updated_at), 60) AS minutes
@@ -412,5 +413,22 @@ class OrderController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getAllSales(Request $request){
+        $id_order_status_completed = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_COMPLETED'])->pluck('id_order_status')->first();
+        if(isset($request->start_date) && isset($request->end_date)){
+
+            $fecha_inicio = new DateTime($request->start_date);
+            $fecha_inicio = $fecha_inicio->format('Y-m-d H:i:s');
+            $fecha_fin = new DateTime($request->end_date);
+            $fecha_fin = $fecha_fin->format('Y-m-d H:i:s');
+
+            $ventas = Order::where('id_order_Status', $id_order_status_completed)
+            ->whereBetween('updated_at', [$fecha_inicio, $fecha_fin])->get();
+            return count($ventas);
+        }
+        $ventas = Order::where('id_order_Status', $id_order_status_completed)->get();
+        return count($ventas);
     }
 }
