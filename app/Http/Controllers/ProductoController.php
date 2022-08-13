@@ -598,7 +598,7 @@ class ProductoController extends Controller
 
     public function getAllProductsByCategory(){
         $categorias = Category::whereNotIn('category_descripcion', [$_ENV['NO_DEFINIDO']])->get();
-        
+
         if(count($categorias) >= 1){
             $data = [];
             foreach($categorias as $categoria){
@@ -606,9 +606,13 @@ class ProductoController extends Controller
                 $productos = Producto::where('id_category', $categoria->id_category)->get();
                 array_push($data, array ("id_category"=>$categoria->id_category, "category_name"=> $categoria->category_name, "products"=> count($productos) ) );
             }
+            $id_categoria_no_definida = Category::where('category_descripcion', $_ENV['NO_DEFINIDO'])->pluck('category_descripcion')->first();
+            $productos = Producto::whereNotIn('id_category', [$id_categoria_no_definida])->get();
+
             return response()->json([
                 'message' => 'Consulta realizada con exito',
                 'status' => $_ENV['CODE_STATUS_OK'],
+                'count' => count($productos),
                 'data' => $data
             ]);
         }
