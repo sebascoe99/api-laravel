@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Audit;
+use App\Models\InventaryI;
 use App\Models\Producto;
 use App\Models\Provider;
 use App\Models\PurchaseOrder;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use DateTime;
 
 class PurchaseOrderController extends Controller
 {
@@ -206,18 +208,27 @@ class PurchaseOrderController extends Controller
                     $producto = Producto::where('id_product', $pro['id_product'])->first();
                     $producto->product_stock = ($producto->product_stock + $pro['purchase_order_products_amount']);
                     $producto->save();
+
+                    $inventario = new InventaryI();
+                    $inventario->id_product =  $pro['id_product'];
+                    $inventario->inventory_movement_type = $_ENV['INVENTORY_MOVEMENT_TYPE_INGRESO'];
+                    $inventario->inventory_stock_amount = $pro['purchase_order_products_amount'];
+                    $inventario->inventory_description = $_ENV['INVENTORY_DESCRIPTION_INGRESO_P'];
+                    $inventario->save();
                 }
             }else{
                 $purchase_order_products->id_purchase_order_products_status == $_ENV['STATUS_OFF'];
                 $purchase_order_products->save();
             }
         }
+        $fecha = new DateTime($request->date_purchase);
+        $fecha = $fecha->format('Y-m-d H:i:s');
 
         $purchase_order->purchase_order_status = $_ENV['STATUS_ON'];
         $purchase_order->purchase_order_total = $request->purchase_order_total;
         $purchase_order->tipe_of_pay = $request->tipe_of_pay;
         $purchase_order->facture = $request->facture;
-        $purchase_order->date_purchase = $request->date_purchase;
+        $purchase_order->date_purchase = $fecha;
         $user = User::where('id_user', $request->id_user)->first();
 
         DB::enableQueryLog();
