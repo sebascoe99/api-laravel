@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\MailContact;
+use App\Mail\MailLinkPassword;
 use App\Mail\MailQuotation;
 use App\Mail\Mailte;
 use Illuminate\Http\Request;
@@ -87,6 +88,16 @@ class MailController extends Controller
     public function sendEmailProvider($productos, $provider_email){
 
         Mail::to($provider_email)->send(new MailQuotation($productos));
+
+        return response()->json([
+            'message' => 'Correo enviado',
+            'status' => $_ENV['CODE_STATUS_OK']
+        ]);
+    }
+
+    public function sendEmailRecoverPassword($email, $link){
+
+        Mail::to($email)->send(new MailLinkPassword($link));
 
         return response()->json([
             'message' => 'Correo enviado',

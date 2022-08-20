@@ -259,4 +259,44 @@ class UserController extends Controller
             ]);
         }
     }
+
+    public function changePasswordByLink(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required|numeric|min:0|not_in:0'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+        }
+        if(!(isset($request->link))){
+            return response()->json([
+                'message' => 'Debe proporcionar el link de recuperación de contraseña',
+                'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+            ]);
+        }
+
+        $user = User::findOrFail($request->id_user);
+
+        $mainController = new MailController();
+        $mainController->sendEmailRecoverPassword($user->email, $request->link);
+
+        return response()->json([
+            'message' => 'Correo de recuperación de clave enviado con éxito',
+            'status' => $_ENV['CODE_STATUS_OK']
+        ]);
+    }
 }
