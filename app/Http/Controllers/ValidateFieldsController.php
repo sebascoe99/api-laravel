@@ -107,12 +107,13 @@ class ValidateFieldsController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
         }
-        $email = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-        if(isset($email)){
+        if(isset($user)){
             return response()->json([
                 'message' => "Existe",
-                'status' => $_ENV['CODE_STATUS_OK']
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'id_user' => $user->id_user
             ]);
         }else{
             return response()->json([

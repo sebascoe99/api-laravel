@@ -53,7 +53,8 @@ class OrderController extends Controller
                 'id_user' => 'required|numeric|min:0|not_in:0',
                 'order_price_total' => 'required|numeric|min:0|not_in:0',
                 'id_address' => 'required|numeric|min:0|not_in:0',
-                'address_reference' => 'required'
+                'address_reference' => 'required',
+                'type_of_pay' => 'required|numeric|min:0|not_in:0'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
