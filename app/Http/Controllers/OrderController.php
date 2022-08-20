@@ -101,9 +101,11 @@ class OrderController extends Controller
 
         if($orden->save()){
             $id_order = $orden->id_order;
-            $id_pago_paypal = TypePay::where('pay_description', '=', $_ENV['TYPE_PAY_PAYPAL'])->pluck('id_pay')->first();
 
-            if(!isset($id_pago_paypal)){
+            if(!($request->type_of_pay == 1 || $request->type_of_pay == 2))
+                $request->type_of_pay = 1;
+
+            if(!isset($orden->id_order)){
                 $orden = Order::find($id_order);
                 $orden->delete();
 
@@ -117,7 +119,7 @@ class OrderController extends Controller
             foreach($products as $product){
                 $orden_detalle = new OrderDetail();
                 $orden_detalle->id_product = intval($product['id_product']);
-                $orden_detalle->id_pay = $id_pago_paypal;
+                $orden_detalle->id_pay = $request->type_of_pay;
                 $orden_detalle->order_detail_quantity = intval($product['product_amount_sail']);
                 if(array_key_exists('product_offered', $product)){
                     $orden_detalle->order_detail_discount = $product['product_offered'];
