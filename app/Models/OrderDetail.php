@@ -21,10 +21,6 @@ class OrderDetail extends Model
         return $this->belongsTo(Producto::class, 'id_product');
     }
 
-    public function typePay(){
-        return $this->belongsTo(TypePay::class, 'id_pay');
-    }
-
     public function address(){
         return $this->belongsTo(Address::class, 'id_address');
     }

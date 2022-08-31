@@ -17,8 +17,8 @@ class TypePay extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s'
     ];
 
-    public function orderDetail(){
-        return $this->hasOne(OrderDetail::class, 'id_pay');
+    public function order(){
+        return $this->hasOne(Order::class, 'id_pay');
     }
 
     use HasFactory;

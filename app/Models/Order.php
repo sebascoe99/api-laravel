@@ -33,5 +33,9 @@ class Order extends Model
         return $this->hasOne(OrderOrderDetail::class, 'id_order');
     }
 
+    public function typePay(){
+        return $this->belongsTo(TypePay::class, 'id_pay');
+    }
+
     use HasFactory;
 }

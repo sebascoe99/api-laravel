@@ -26,7 +26,7 @@ class InventaryEController extends Controller
      */
     public function index()
     {
-        $inventarioE = InventaryE::with('order', 'order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.address', 'orderDetail.producto','orderDetail.producto.category', 'orderDetail.typePay')->whereHas('order', function (Builder $query) {
+        $inventarioE = InventaryE::with('order', 'order.user', 'order.orderStatus', 'order.typePay', 'orderDetail', 'orderDetail.address', 'orderDetail.producto','orderDetail.producto.category')->whereHas('order', function (Builder $query) {
             $id_order_status_completed = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_COMPLETED'])->pluck('id_order_status')->first();
 
             if(!isset($id_order_status_completed)){
@@ -64,14 +64,14 @@ class InventaryEController extends Controller
                     'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
                 ]);
         }
-        $orden = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')->where('id_order', '=',  $request->id_order)->get();
+        $orden = OrderOrderDetail::with('order.user', 'order.orderStatus', 'order.typePay', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit')->where('id_order', '=',  $request->id_order)->get();
         return $orden;
     }
 
 
     public function getOrderDetailStatusCompleted()
     {
-        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')->whereHas('order', function (Builder $query) {
+        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'order.typePay', 'orderDetail', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit')->whereHas('order', function (Builder $query) {
             $id_order_status_completed = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_COMPLETED'])->pluck('id_order_status')->first();
 
             if(!isset($id_order_status_completed)){
@@ -149,15 +149,7 @@ class InventaryEController extends Controller
             $vaucher_present = $serie.'-'. $serie.'-'.$vaucher_present;
         }
 
-        $orden = new Order();
-        $orden->id_user = $request->id_user;
-        $orden->id_order_status = $id_order_status_completed;
-        $orden->order_price_total = 0;
-        $orden->voucher_number = $vaucher_present;
-
-        if($orden->save()){
-            $id_order = $orden->id_order;
-            $id_pago_efectivo = TypePay::where('pay_description', '=', $_ENV['TYPE_PAY_CASH'])->pluck('id_pay')->first();
+        $id_pago_efectivo = TypePay::where('pay_description', '=', $_ENV['TYPE_PAY_CASH'])->pluck('id_pay')->first();
 
             if(!isset($id_pago_efectivo)){
                 return response()->json([
@@ -166,9 +158,18 @@ class InventaryEController extends Controller
                 ]);
             }
 
+        $orden = new Order();
+        $orden->id_user = $request->id_user;
+        $orden->id_order_status = $id_order_status_completed;
+        $orden->id_pay = $id_pago_efectivo;
+        $orden->order_price_total = 0;
+        $orden->voucher_number = $vaucher_present;
+
+        if($orden->save()){
+            $id_order = $orden->id_order;
+
             $orden_detalle = new OrderDetail();
             $orden_detalle->id_product = $request->id_product;
-            $orden_detalle->id_pay = $id_pago_efectivo;
             $orden_detalle->order_detail_quantity = 0;
             $orden_detalle->order_detail_discount = 0;
             $orden_detalle->order_detail_subtotal = 0;

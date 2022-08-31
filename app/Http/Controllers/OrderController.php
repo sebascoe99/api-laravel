@@ -94,17 +94,18 @@ class OrderController extends Controller
             $vaucher_present = $serie.'-'. $serie.'-'.$vaucher_present;
         }
 
+        if(!($request->type_of_pay == 1 || $request->type_of_pay == 2))
+            $request->type_of_pay = 1;
+
         $orden = new Order();
         $orden->id_user = $request->id_user;
         $orden->id_order_status = $id_order_status_pending;
+        $orden->id_pay = $request->type_of_pay;
         $orden->order_price_total = $request->order_price_total;
         $orden->voucher_number = $vaucher_present;
 
         if($orden->save()){
             $id_order = $orden->id_order;
-
-            if(!($request->type_of_pay == 1 || $request->type_of_pay == 2))
-                $request->type_of_pay = 1;
 
             if(!isset($orden->id_order)){
                 $orden = Order::find($id_order);
@@ -120,7 +121,6 @@ class OrderController extends Controller
             foreach($products as $product){
                 $orden_detalle = new OrderDetail();
                 $orden_detalle->id_product = intval($product['id_product']);
-                $orden_detalle->id_pay = $request->type_of_pay;
                 $orden_detalle->order_detail_quantity = intval($product['product_amount_sail']);
                 if(array_key_exists('product_offered', $product)){
                     $orden_detalle->order_detail_discount = $product['product_offered'];
@@ -270,7 +270,7 @@ class OrderController extends Controller
             $query->select('id_order_status', 'order_status_description');
         }]))
         ->with((['orderDetail' => function ($query) {
-            $query->select('id_order_detail', 'id_product', 'id_pay', 'order_detail_quantity', 'order_detail_discount', 'order_detail_subtotal', 'order_detail_iva', 'order_detail_total');
+            $query->select('id_order_detail', 'id_product', 'order_detail_quantity', 'order_detail_discount', 'order_detail_subtotal', 'order_detail_iva', 'order_detail_total');
         }]))
         ->with((['orderDetail.producto' => function ($query) {
             $query->select('id_product', 'id_provider', 'id_product_unit', 'product_name', 'product_code', 'product_description', 'product_price', 'product_rating');
@@ -281,7 +281,7 @@ class OrderController extends Controller
         ->with((['orderDetail.producto.productUnit' => function ($query) {
             $query->select('id_product_unit', 'name_product_unit', 'description_product_unit');
         }]))
-        ->with((['orderDetail.typePay' => function ($query) {
+        ->with((['order.typePay' => function ($query) {
             $query->select('id_pay', 'pay_description');
         }]))
         ->whereHas('order', function (Builder $query) {
@@ -292,7 +292,7 @@ class OrderController extends Controller
     }
 
     public function getOrderBySeller(){
-        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'orderDetail', 'orderDetail.address', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit', 'orderDetail.typePay')
+        $ordenes = OrderOrderDetail::with('order.user', 'order.orderStatus', 'order.typePay', 'orderDetail', 'orderDetail.address', 'orderDetail.producto', 'orderDetail.producto.provider', 'orderDetail.producto.productUnit')
         /*->whereHas('order', function (Builder $query) {
             $id_order_status_pending = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_PENDING'])->pluck('id_order_status')->first();
 
