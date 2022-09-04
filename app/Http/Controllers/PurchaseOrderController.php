@@ -256,4 +256,36 @@ class PurchaseOrderController extends Controller
             ]);
         }
     }
+
+    public function getPurchasesByDate(Request $request){
+        $anioMes = date('Y-m');
+
+        if(isset($request->fecha_inicio) && isset($request->fecha_fin)){
+            $fecha_inicio = $request->fecha_inicio;
+            $fecha_fin = $request->fecha_fin;
+
+            $compras = PurchaseOrder::whereBetween('updated_at', [$fecha_inicio, $fecha_fin])
+            ->where('purchase_order_status', 1)->get();
+
+            $data = ['Compras' => count($compras)];
+
+            return response()->json([
+                'message' => 'Consulta realizada con exito',
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'data' => $data
+            ]);
+
+        }
+
+        $compras = PurchaseOrder::orWhere('updated_at', 'like', $anioMes . '%')
+        ->where('purchase_order_status', 1)->get();
+
+        $data = ['Compras' => count($compras)];
+
+        return response()->json([
+            'message' => 'Consulta realizada con exito',
+            'status' => $_ENV['CODE_STATUS_OK'],
+            'data' => $data
+        ]);
+    }
 }

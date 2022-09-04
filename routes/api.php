@@ -165,6 +165,7 @@ Route::post('/iva', [IvaController::class, 'store']); //crear iva
 Route::get('/purchase/order', [PurchaseOrderController::class, 'index']); //mostrar ordenes compra
 Route::post('/purchase/order', [PurchaseOrderController::class, 'store']); //crear orden de compra
 Route::post('/checked-purchase-order', [PurchaseOrderController::class, 'confirmateProductsPurchaseOrder']);
+Route::post('/purchases/by/date', [PurchaseOrderController::class, 'getPurchasesByDate']); //mostrar ordenes compra
 
 //
 
