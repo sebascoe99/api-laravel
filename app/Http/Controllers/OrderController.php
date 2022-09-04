@@ -493,7 +493,6 @@ class OrderController extends Controller
             $fecha_inicio = $request->fecha_inicio;
             $fecha_fin = $request->fecha_fin;
 
-            DB::enableQueryLog();
             $ordenesPaypal = Order::whereBetween('updated_at', [$fecha_inicio, $fecha_fin])
             ->where('id_order_status', $id_order_status_completed)->where('id_pay', $id_pago_paypal)
             ->get();
@@ -502,17 +501,12 @@ class OrderController extends Controller
             ->where('id_order_status', $id_order_status_completed)->where('id_pay', $id_pago_credit_card)
             ->get();
 
-            foreach (DB::getQueryLog() as $q) {
-                $queryStr = Str::replaceArray('?', $q['bindings'], $q['query']);
-            }
-
             $data = ['PayPal' => count($ordenesPaypal), 'Tarjeta de Crédito/Débito' => count($ordenesCreditCard)];
 
             return response()->json([
                 'message' => 'Consulta realizada con exito',
                 'status' => $_ENV['CODE_STATUS_OK'],
-                'data' => $data,
-                'sql' => $queryStr
+                'data' => $data
             ]);
 
         }
@@ -530,7 +524,40 @@ class OrderController extends Controller
         return response()->json([
             'message' => 'Consulta realizada con exito',
             'status' => $_ENV['CODE_STATUS_OK'],
-            'data' => $data,
+            'data' => $data
+        ]);
+    }
+
+    public function getSalesByDate(Request $request){
+        $id_order_status_completed = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_COMPLETED'])->pluck('id_order_status')->first();
+
+        $anioMes = date('Y-m');
+        if(isset($request->fecha_inicio) && isset($request->fecha_fin)){
+            $fecha_inicio = $request->fecha_inicio;
+            $fecha_fin = $request->fecha_fin;
+
+            $ordenes = Order::whereBetween('updated_at', [$fecha_inicio, $fecha_fin])
+            ->where('id_order_status', $id_order_status_completed)->get();
+
+            $data = ['Ventas' => count($ordenes)];
+
+            return response()->json([
+                'message' => 'Consulta realizada con exito',
+                'status' => $_ENV['CODE_STATUS_OK'],
+                'data' => $data
+            ]);
+
+        }
+
+        $ordenes = Order::orWhere('updated_at', 'like', $anioMes . '%')
+        ->where('id_order_status', $id_order_status_completed)->get();
+
+        $data = ['Ventas' => count($ordenes)];
+
+        return response()->json([
+            'message' => 'Consulta realizada con exito',
+            'status' => $_ENV['CODE_STATUS_OK'],
+            'data' => $data
         ]);
     }
 }
