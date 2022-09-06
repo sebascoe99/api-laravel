@@ -261,8 +261,8 @@ class PurchaseOrderController extends Controller
         $anioMes = date('Y-m');
 
         if(isset($request->fecha_inicio) && isset($request->fecha_fin)){
-            $fecha_inicio = $request->fecha_inicio;
-            $fecha_fin = $request->fecha_fin;
+            $fecha_inicio = $request->fecha_inicio." 00:00:00";
+            $fecha_fin = $request->fecha_fin." 23:59:00";
 
             $compras = PurchaseOrder::whereBetween('updated_at', [$fecha_inicio, $fecha_fin])
             ->where('purchase_order_status', 1)->get();

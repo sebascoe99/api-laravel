@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use DateTime;
+use \stdClass;
 
 class OrderController extends Controller
 {
@@ -490,8 +491,8 @@ class OrderController extends Controller
 
         $anioMes = date('Y-m');
         if(isset($request->fecha_inicio) && isset($request->fecha_fin)){
-            $fecha_inicio = $request->fecha_inicio;
-            $fecha_fin = $request->fecha_fin;
+            $fecha_inicio = $request->fecha_inicio." 00:00:00";
+            $fecha_fin = $request->fecha_fin." 23:59:00";
 
             $ordenesPaypal = Order::whereBetween('updated_at', [$fecha_inicio, $fecha_fin])
             ->where('id_order_status', $id_order_status_completed)->where('id_pay', $id_pago_paypal)
@@ -531,33 +532,104 @@ class OrderController extends Controller
     public function getSalesByDate(Request $request){
         $id_order_status_completed = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_COMPLETED'])->pluck('id_order_status')->first();
 
+        $cantidadDias = cal_days_in_month(CAL_GREGORIAN, date("m"), date("Y"));
         $anioMes = date('Y-m');
-        if(isset($request->fecha_inicio) && isset($request->fecha_fin)){
-            $fecha_inicio = $request->fecha_inicio;
-            $fecha_fin = $request->fecha_fin;
+        $data = new stdClass();
 
-            $ordenes = Order::whereBetween('updated_at', [$fecha_inicio, $fecha_fin])
+        if(isset($request->fechas)){
+            if(count($request->fechas) == 1){
+                foreach($request->fechas as $fecha){
+                    $ordenes = Order::orWhere('updated_at', 'like', $fecha . '%')
+                    ->where('id_order_status', $id_order_status_completed)->get();
+
+                    $nombreMes = $this->getNameMonth(substr($fecha, -2));
+                    $data->$nombreMes = count($ordenes);
+                }
+
+                return response()->json([
+                    'message' => 'Consulta realizada con exito',
+                    'status' => $_ENV['CODE_STATUS_OK'],
+                    'data' => $data
+                ]);
+
+            }else{
+
+                foreach($request->fechas as $fecha){
+                    $ordenes = Order::orWhere('updated_at', 'like', $fecha . '%')
+                    ->where('id_order_status', $id_order_status_completed)->get();
+
+                    $nombreMes = $this->getNameMonth(substr($fecha, -2));
+                    $data->$nombreMes = count($ordenes);
+                }
+
+                return response()->json([
+                    'message' => 'Consulta realizada con exito',
+                    'status' => $_ENV['CODE_STATUS_OK'],
+                    'data' => $data
+                ]);
+            }
+        }
+
+        $count = new stdClass();
+
+        for ($i = 1; $i <= $cantidadDias; $i++) {
+            $dia = ($i < 10) ? '0'.$i : $i;
+            $ordenes = Order::orWhere('updated_at', 'like', $anioMes . '-'. $dia . '%')
             ->where('id_order_status', $id_order_status_completed)->get();
 
-            $data = ['Ventas' => count($ordenes)];
-
-            return response()->json([
-                'message' => 'Consulta realizada con exito',
-                'status' => $_ENV['CODE_STATUS_OK'],
-                'data' => $data
-            ]);
-
+            $data->$i = count($ordenes);
         }
 
         $ordenes = Order::orWhere('updated_at', 'like', $anioMes . '%')
         ->where('id_order_status', $id_order_status_completed)->get();
-
-        $data = ['Ventas' => count($ordenes)];
+        $count->Ventas = count($ordenes);
 
         return response()->json([
             'message' => 'Consulta realizada con exito',
             'status' => $_ENV['CODE_STATUS_OK'],
-            'data' => $data
+            'data' => $data,
+            'count' => $count
         ]);
+    }
+
+    public function getNameMonth($numeroMes){
+        switch($numeroMes){
+            case '01':
+                return "Enero";
+            break;
+            case '02':
+                return "Febrero";
+            break;
+            case '03':
+                return "Marzo";
+            break;
+            case '04':
+                return "Abril";
+            break;
+            case '05':
+                return "Mayo";
+            break;
+            case '06':
+                return "Junio";
+            break;
+            case '07':
+                return "Julio";
+            break;
+            case '08':
+                return "Agosto";
+            break;
+            case '09':
+                return "Septiembre";
+            break;
+            case '10':
+                return "Ostubre";
+            break;
+            case '11':
+                return "Noviembre";
+            break;
+            case '12':
+                return "Diciembre";
+            break;
+        }
     }
 }
