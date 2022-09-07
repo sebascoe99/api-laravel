@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use DateTime;
+use \stdClass;
 
 class PurchaseOrderController extends Controller
 {
@@ -258,34 +259,76 @@ class PurchaseOrderController extends Controller
     }
 
     public function getPurchasesByDate(Request $request){
+        $cantidadDias = cal_days_in_month(CAL_GREGORIAN, date("m"), date("Y"));
         $anioMes = date('Y-m');
+        $data = new stdClass();
+        $count = new stdClass();
 
-        if(isset($request->fecha_inicio) && isset($request->fecha_fin)){
-            $fecha_inicio = $request->fecha_inicio." 00:00:00";
-            $fecha_fin = $request->fecha_fin." 23:59:00";
+        if(isset($request->fechas)){
 
-            $compras = PurchaseOrder::whereBetween('updated_at', [$fecha_inicio, $fecha_fin])
-            ->where('purchase_order_status', 1)->get();
+            if(count($request->fechas) == 1){
+                foreach($request->fechas as $fecha){
+                    $cantidadDias = cal_days_in_month(CAL_GREGORIAN, substr($fecha, -2), substr($fecha, -7, 4));
 
-            $data = ['Compras' => count($compras)];
+                    for ($i = 1; $i <= $cantidadDias; $i++) {
+                        $dia = ($i < 10) ? '0'.$i : $i;
+                        $compras = PurchaseOrder::orWhere('updated_at', 'like', $fecha . '-'. $dia . '%')
+                        ->where('purchase_order_status', $_ENV['STATUS_ON'])->get();
 
-            return response()->json([
-                'message' => 'Consulta realizada con exito',
-                'status' => $_ENV['CODE_STATUS_OK'],
-                'data' => $data
-            ]);
+                        $data->$i = count($compras);
+                    }
+                }
 
+                $compras = PurchaseOrder::orWhere('updated_at', 'like', $fecha . '%')
+                ->where('purchase_order_status', $_ENV['STATUS_ON'])->get();
+                $count->Compras = count($compras);
+
+                return response()->json([
+                    'message' => 'Consulta realizada con exito',
+                    'status' => $_ENV['CODE_STATUS_OK'],
+                    'data' => $data,
+                    'count' => $count
+                ]);
+
+            }else{
+
+                foreach($request->fechas as $fecha){
+                    $compras = PurchaseOrder::orWhere('updated_at', 'like', $fecha . '%')
+                    ->where('purchase_order_status', $_ENV['STATUS_ON'])->get();
+
+                    $orderClass = new OrderController;
+                    $nombreMes = $orderClass->getNameMonth(substr($fecha, -2));
+                    $data->$nombreMes = count($compras);
+                }
+
+                return response()->json([
+                    'message' => 'Consulta realizada con exito',
+                    'status' => $_ENV['CODE_STATUS_OK'],
+                    'data' => $data
+                ]);
+            }
+        }
+
+        $count = new stdClass();
+
+        for ($i = 1; $i <= $cantidadDias; $i++) {
+            $dia = ($i < 10) ? '0'.$i : $i;
+            $ventas = PurchaseOrder::orWhere('updated_at', 'like', $anioMes . '-'. $dia . '%')
+            ->where('purchase_order_status', $_ENV['STATUS_ON'])->get();
+
+            $data->$i = count($ventas);
         }
 
         $compras = PurchaseOrder::orWhere('updated_at', 'like', $anioMes . '%')
-        ->where('purchase_order_status', 1)->get();
-
-        $data = ['Compras' => count($compras)];
+        ->where('purchase_order_status', $_ENV['STATUS_ON'])->get();
+        $count->Compras = count($compras);
 
         return response()->json([
             'message' => 'Consulta realizada con exito',
             'status' => $_ENV['CODE_STATUS_OK'],
-            'data' => $data
+            'data' => $data,
+            'count' => $count
         ]);
     }
+
 }

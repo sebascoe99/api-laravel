@@ -535,21 +535,32 @@ class OrderController extends Controller
         $cantidadDias = cal_days_in_month(CAL_GREGORIAN, date("m"), date("Y"));
         $anioMes = date('Y-m');
         $data = new stdClass();
+        $count = new stdClass();
 
         if(isset($request->fechas)){
             if(count($request->fechas) == 1){
+                //return $request->fechas;
                 foreach($request->fechas as $fecha){
-                    $ordenes = Order::orWhere('updated_at', 'like', $fecha . '%')
-                    ->where('id_order_status', $id_order_status_completed)->get();
+                    $cantidadDias = cal_days_in_month(CAL_GREGORIAN, substr($fecha, -2), substr($fecha, -7, 4));
 
-                    $nombreMes = $this->getNameMonth(substr($fecha, -2));
-                    $data->$nombreMes = count($ordenes);
+                    for ($i = 1; $i <= $cantidadDias; $i++) {
+                        $dia = ($i < 10) ? '0'.$i : $i;
+                        $ordenes = Order::orWhere('updated_at', 'like', $fecha . '-'. $dia . '%')
+                        ->where('id_order_status', $id_order_status_completed)->get();
+
+                        $data->$i = count($ordenes);
+                    }
                 }
+
+                $ventas = Order::orWhere('updated_at', 'like', $fecha . '%')
+                ->where('id_order_status', $id_order_status_completed)->get();
+                $count->Ventas = count($ventas);
 
                 return response()->json([
                     'message' => 'Consulta realizada con exito',
                     'status' => $_ENV['CODE_STATUS_OK'],
-                    'data' => $data
+                    'data' => $data,
+                    'count' => $count
                 ]);
 
             }else{
