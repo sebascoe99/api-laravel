@@ -82,7 +82,7 @@ class UserController extends Controller
         $user->password = Hash::make($request->password);
         $user->password_encrypt = Crypt::encryptString($request->password);
         $user->user_phone = $request->user_phone;
-        //$user->user_address = $request->user_address;
+        $user->user_address = $request->user_address;
         $user->user_status = $_ENV['STATUS_ON'];
 
         $user->save();
