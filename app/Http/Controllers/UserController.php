@@ -53,7 +53,7 @@ class UserController extends Controller
                 'password' => 'required',
                 'user_phone' => 'required',
                 'user_address' => 'required',
-                'address_description' => 'required'
+                //'address_description' => 'required'
             ],
             [
                 'required' => 'El campo :attribute es requerido'
