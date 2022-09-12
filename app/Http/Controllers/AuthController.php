@@ -65,7 +65,7 @@ class AuthController extends Controller
             $address->id_user = $user->id_user;
             $address->user_address = $request->user_address;
             $address->address_status = $_ENV['STATUS_ON'];
-            //$address->address_description = $request->address_description;
+            $address->address_description = "Casa";
             $address->save();
 
             if(isset($address->id_address)){
