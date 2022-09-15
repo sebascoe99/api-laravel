@@ -643,4 +643,11 @@ class OrderController extends Controller
             break;
         }
     }
+
+    public function getInfoOrderById(Request $request){
+        $result = DB::select("select * from `order`
+        where `order`.`id_order` = $request->id ;");
+
+        return $result['0'];
+    }
 }

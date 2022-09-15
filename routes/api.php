@@ -127,6 +127,7 @@ Route::post('/sales/all', [OrderController::class, 'getAllSales']);
 Route::post('/orders/by/status', [OrderController::class, 'getAllOrdersByStatus']);
 Route::post('/type-pay/orders', [OrderController::class, 'getTypePayByOrder']);
 Route::post('/sales/by/date', [OrderController::class, 'getSalesByDate']);
+Route::post('/order/id', [OrderController::class, 'getInfoOrderById']);
 
 // Rutas para el controlador AuditController
 Route::get('/audit', [AuditController::class, 'index']); //mostrar todos los usuarios excepto los usuarios clientes
