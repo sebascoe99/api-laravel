@@ -296,6 +296,8 @@ class UserController extends Controller
 
         $mainController = new MailController();
         $mainController->sendEmailRecoverPassword($user->email, $request->link);
+        $user->is_link = $_ENV['STATUS_OFF'];
+        $user->save();
 
         return response()->json([
             'message' => 'Correo de recuperación de clave enviado con éxito',
