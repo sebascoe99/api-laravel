@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\InventaryE;
 use App\Models\Order;
 use App\Models\OrderDetail;
@@ -167,9 +168,12 @@ class InventaryEController extends Controller
 
         if($orden->save()){
             $id_order = $orden->id_order;
+            $id_address = Address::where('id_user', $request->id_user)->pluck('id_address')->first();
 
             $orden_detalle = new OrderDetail();
             $orden_detalle->id_product = $request->id_product;
+            $orden_detalle->id_address = $id_address;
+            $orden_detalle->address_reference = "Ferretería el Descanso";
             $orden_detalle->order_detail_quantity = 0;
             $orden_detalle->order_detail_discount = 0;
             $orden_detalle->order_detail_subtotal = 0;
