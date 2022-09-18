@@ -428,4 +428,40 @@ class ValidateFieldsController extends Controller
         }
     }
 
+    public function validatePasswordChangeRequestExists(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id_user' => 'required'
+            ],
+            [
+                'required' => 'El campo :attribute es requerido'
+            ]);
+
+            if($validator->fails()){
+                return response()->json([
+                    'message' => $validator->errors(),
+                    'status' => $_ENV['CODE_STATUS_ERROR_CLIENT']
+                ]);
+            }
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => $_ENV['CODE_STATUS_SERVER_ERROR']
+            ]);
+        }
+        $existeUnaPeticionCambioContraseña = User::where('id_user', $request->id_user)->pluck('is_link')->first();
+
+        if($existeUnaPeticionCambioContraseña == 0){
+            return response()->json([
+                'message' => 'existe',
+                'status' => $_ENV['CODE_STATUS_OK'],
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'no existe',
+                'status' => $_ENV['CODE_STATUS_OK'],
+            ]);
+        }
+    }
+
 }

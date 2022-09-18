@@ -224,6 +224,9 @@ class UserController extends Controller
         $user = User::findOrFail($request->id);
         $user->password = Hash::make($request->password);
         $user->password_encrypt = Crypt::encryptString($request->password);
+        if(property_exists($request, 'is_link')){
+            $user->is_link = $_ENV['STATUS_ON'];
+        }
 
         if($user->save()){
             return response()->json([

@@ -142,6 +142,7 @@ Route::post('/validate/address/order', [ValidateFieldsController::class, 'valida
 Route::post('/validate/product/stock', [ValidateFieldsController::class, 'validateProductHasStock']);
 Route::post('/validate/provider/name', [ValidateFieldsController::class, 'validateProviderNameExist']);
 Route::post('/validate/provider/identification', [ValidateFieldsController::class, 'validateProviderIdentificationExist']);
+Route::post('/validate/exists/change/password', [ValidateFieldsController::class, 'validatePasswordChangeRequestExists']);
 
 // Rutas para el controlador ShoppingCartController
 Route::post('/shopping/card/get', [ShoppingCartController::class, 'getProductCardByIdUser']);
