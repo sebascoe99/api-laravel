@@ -45,7 +45,7 @@ class ProviderController extends Controller
                 'provider_products_offered' => 'required',
                 'provider_phone' => 'required',
                 'provider_landline' => 'required',
-                'provider_web_page' => 'required',
+                //'provider_web_page' => 'required',
                 'provider_person_name' => 'required',
                 'provider_person_lastName' => 'required',
                 'provider_response_time_day' => 'required',
@@ -81,7 +81,9 @@ class ProviderController extends Controller
         $proveedor->provider_products_offered = $request->provider_products_offered;
         $proveedor->provider_phone = $request->provider_phone;
         $proveedor->provider_landline = $request->provider_landline;
-        $proveedor->provider_web_page = $request->provider_web_page;
+        if(isset($request->provider_web_page)){
+            $proveedor->provider_web_page = $request->provider_web_page;
+        }
         $proveedor->provider_person_name = $request->provider_person_name;
         $proveedor->provider_person_lastName = $request->provider_person_lastName;
         $proveedor->provider_response_time_day = $request->provider_response_time_day;
@@ -135,7 +137,7 @@ class ProviderController extends Controller
                 'provider_products_offered' => 'required',
                 'provider_phone' => 'required | max:15',
                 'provider_landline' => 'required | max:15',
-                'provider_web_page' => 'required',
+                //'provider_web_page' => 'required',
                 'provider_person_name' => 'required',
                 'provider_person_lastName' => 'required',
                 'provider_response_time_day' => 'required',
@@ -171,7 +173,9 @@ class ProviderController extends Controller
         $proveedor->provider_products_offered = $request->provider_products_offered;
         $proveedor->provider_phone = $request->provider_phone;
         $proveedor->provider_landline = $request->provider_landline;
-        $proveedor->provider_web_page = $request->provider_web_page;
+        if(isset($request->provider_web_page)){
+            $proveedor->provider_web_page = $request->provider_web_page;
+        }
         $proveedor->provider_person_name = $request->provider_person_name;
         $proveedor->provider_person_lastName = $request->provider_person_lastName;
         $proveedor->provider_response_time_day = $request->provider_response_time_day;
