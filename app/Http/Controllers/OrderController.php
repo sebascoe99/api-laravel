@@ -487,7 +487,7 @@ class OrderController extends Controller
     public function getTypePayByOrder(Request $request){
         $id_order_status_completed = OrderStatus::where('order_status_description', '=', $_ENV['ORDEN_COMPLETED'])->pluck('id_order_status')->first();
         $id_pago_paypal = TypePay::where('pay_description', '=', $_ENV['TYPE_PAY_PAYPAL'])->pluck('id_pay')->first();
-        $id_pago_credit_card = TypePay::where('pay_description', '=', 'Tarjeta de Crédito/Débito')->pluck('id_pay')->first();
+        $id_pago_credit_card = TypePay::where('pay_description', '=', 'Tarjeta de Credito/Debito')->pluck('id_pay')->first();
 
         $anioMes = date('Y-m');
         if(isset($request->fecha_inicio) && isset($request->fecha_fin)){
@@ -502,7 +502,7 @@ class OrderController extends Controller
             ->where('id_order_status', $id_order_status_completed)->where('id_pay', $id_pago_credit_card)
             ->get();
 
-            $data = ['PayPal' => count($ordenesPaypal), 'Tarjeta de Crédito/Débito' => count($ordenesCreditCard)];
+            $data = ['PayPal' => count($ordenesPaypal), 'Tarjeta de Credito/Debito' => count($ordenesCreditCard)];
 
             return response()->json([
                 'message' => 'Consulta realizada con exito',
